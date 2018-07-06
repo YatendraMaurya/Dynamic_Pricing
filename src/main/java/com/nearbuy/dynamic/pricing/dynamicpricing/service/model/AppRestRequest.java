@@ -11,7 +11,7 @@ public class AppRestRequest<T, P> {
     Class<P> responseType;
 //    Add req header
 
-    public AppRestRequest(String type, String url, Map<String, Object> queryParams, T body, Class<T> resposeType) {
+    public AppRestRequest(String type, String url, Map<String, Object> queryParams, T body, Class<P> responseType) {
         this.type = type;
         this.url = url;
         this.queryParams = queryParams;
@@ -49,5 +49,13 @@ public class AppRestRequest<T, P> {
 
     public void setBody(T body) {
         this.body = body;
+    }
+
+    public Class<P> getResponseType() {
+        return responseType;
+    }
+
+    public void setResponseType(Class<P> responseType) {
+        this.responseType = responseType;
     }
 }

@@ -15,6 +15,7 @@ import java.awt.print.Book;
 public class BookingService {
 
     private static final String BOOKING_SERVICE = "booking.service";
+
     @Autowired
     private AppProperties env;
 
@@ -23,8 +24,8 @@ public class BookingService {
 
     public BookingResponse getBooking(long id){
         String url = env.getProperty(BOOKING_SERVICE) + "/booking/"+id;
-        AppRestResponse resp = client.fireRequest(AppRequestFactory.get(url, BookingResponse.class));
-        return resp.getBody();
+        AppRestResponse resp = client.fireGet(AppRequestFactory.get(url, BookingResponse.class));
+        return null;
     }
 
 

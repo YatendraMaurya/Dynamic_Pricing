@@ -8,7 +8,7 @@ public class AppRequestFactory {
     private static final String GET = "get";
 
     public static <T, P> AppRestRequest<T, P> getPostRequest(String url, T body, Class<P> resposeType){
-      return new AppRestRequest(POST, url, null, body, resposeType);
+      return new AppRestRequest<T ,P>(POST, url, null,  body, resposeType);
     }
 
     public static <T> AppRestRequest<Void, T> get(String url, Class<T> resposeType) {
