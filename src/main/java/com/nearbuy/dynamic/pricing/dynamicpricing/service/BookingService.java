@@ -25,7 +25,7 @@ public class BookingService {
 
 
     private static final Logger logger=LoggerFactory.getLogger(BookingService.class);
-    private static String BOOKING_SERVICE="http://booking-service.iwanto.in";
+    private static String BOOKING_SERVICE="http://walle.nearbuytoolsstag.in/v2/bookings/order/";
 
     @Autowired
     private AppProperties env;
@@ -34,11 +34,11 @@ public class BookingService {
     private AppRestClient client;
 
     public BookingResponse getBookingDetails(long id){
-        String url = BOOKING_SERVICE+"/v2/bookings/"+id+"?isDetailReq=true";
+        String url = BOOKING_SERVICE+id+"?isDetailReq=true";
         logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);
         if (resp.getStatusCode().is2xxSuccessful()) {
-
+            logger.info(AppUtil.getFromJson(resp.getBody(), BookingResponse.class).toString());
             return AppUtil.getFromJson(resp.getBody(), BookingResponse.class);
         } else {
             logger.error("Error in getting booking Details for bookingId {}",id);

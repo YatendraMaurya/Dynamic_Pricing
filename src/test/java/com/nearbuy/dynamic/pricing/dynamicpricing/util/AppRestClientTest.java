@@ -1,12 +1,11 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.util;
 
+import com.google.gson.Gson;
+import com.nearbuy.dynamic.pricing.dynamicpricing.dao.BookingDao;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.BookingService;
+import com.nearbuy.dynamic.pricing.dynamicpricing.service.DiscoveryService;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.MerchantService;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.AppRestRequest;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.AppRestResponse;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.BookingResponse;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.MerchantDetail;
-import com.nearbuy.dynamic.pricing.model.Booking;
+import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,14 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AppRestClientTest {
-
     @Autowired
-    AppRestClient appRestClient;
+    DiscoveryService Dservice;
 
     @Autowired
     BookingService service;
@@ -33,8 +32,6 @@ public class AppRestClientTest {
     MerchantService merchantService;
 
     public static final Logger logger = LoggerFactory.getLogger(AppRestClientTest.class);
-    String url="http://nilediscovery-unified.iwanto.in/nile-discovery-V2/merchants/listing";
-    String type="POST";
     String  body="{  " +
             "   \"offersOnly\":true," +
             "   \"offset\":0," +
@@ -68,20 +65,36 @@ public class AppRestClientTest {
 
     @Test
     public void PostRequestTest() {
-        AppRestRequest appRestRequest=new AppRestRequest<String,String>(type,url,null,body,String.class);
-        AppRestResponse appRestResponse=appRestClient.firePost(appRestRequest);
-        logger.info(appRestResponse.getBody().toString());
+        MerchantDiscoveryResponse merchantDiscoveryResponse =Dservice.getDiscoveryDetail(body);
+        logger.info(merchantDiscoveryResponse.toString());
+
     }
 
     @Test
-    public void serviceTest()  {
-        BookingResponse bookingResponse=service.getBookingDetails(850657L);
+    public void BookingserviceTest()  {
+        BookingResponse bookingResponse=service.getBookingDetails(3826720L);
+        ArrayList<Double> cashbacks = new ArrayList<>();
+        for(BookingResponse.OrderLine orderLine : bookingResponse.getOrderDetail().getOrderLines()){
+            for(BookingResponse.OrderBomBOs orderBomBOs : orderLine.getProductBO().getOrderBomBOs()){
+                cashbacks.add(orderBomBOs.getCashback());
+            }
+        }
+        logger.info(cashbacks.toString());
+        logger.info(bookingResponse.getBooking().getOffers()[0].getOfferDealDetail().getMerchants()[0].getMerchantId()+"");
         logger.info(bookingResponse.toString());
     }
 
     @Test
     public void MerchantTest() {
-        List<MerchantDetail> mids=merchantService.getMerchant(100002l);
-        Assert.assertFalse(mids.isEmpty());
+        MerchantDetail merchantDetail=merchantService.getMerchant(63175L);
+        logger.info(merchantDetail.getAddress().getLatitude()+" "+merchantDetail.getAddress().getLongitude()+"");
+        //Assert.assertFalse(mids.isEmpty());
+    }
+
+    @Autowired
+    BookingDao bookingDao;
+    @Test
+    public void Mongotest(){
+        bookingDao.getBookingbyOrderId("5b4c73849cef6163d7a2886a");
     }
 }

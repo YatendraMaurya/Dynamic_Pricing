@@ -1,133 +1,81 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.service.model;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 public class BookingResponse {
 
-    Long customerId;
-    Long checkinDate;
-    Long checkoutDate;
-    Long _id;// only present in kafka Booking event
-    String status;
-    List<Offer> offers;
-    Long orderId;
-    Long bookingInitiatedAt;
+    private OrderDetail orderDetail;
+    private Booking booking;
 
-    public Long getBookingInitiatedAt() {
-        return bookingInitiatedAt;
+    public Booking getBooking() {
+        return booking;
     }
 
-    public void setBookingInitiatedAt(Long bookingInitiatedAt) {
-        this.bookingInitiatedAt = bookingInitiatedAt;
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public class Booking{
+        Offer[] offers;
+
+        public Offer[] getOffers() {
+            return offers;
+        }
+
+        public void setOffers(Offer[] offers) {
+            this.offers = offers;
+        }
+    }
+    public OrderDetail getOrderDetail() {
+        return orderDetail;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getBookingId() {
-        return bookingId;
-    }
-
-    public void setBookingId(Long bookingId) {
-        this.bookingId = bookingId;
-    }
-
-    Long bookingId;//returned in the api response of booking service
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public Long getCheckinDate() {
-        return checkinDate;
-    }
-
-    public void setCheckinDate(Long checkinDate) {
-        this.checkinDate = checkinDate;
-    }
-
-    public Long getCheckoutDate() {
-        return checkoutDate;
-    }
-
-    public void setCheckoutDate(Long checkoutDate) {
-        this.checkoutDate = checkoutDate;
-    }
-
-    public Long get_id() {
-        return _id;
-    }
-
-    public void set_id(Long _id) {
-        this._id = _id;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public List<Offer> getOffers() {
-        return offers;
-    }
-
-    public void setOffers(List<Offer> offers) {
-        this.offers = offers;
+    public void setOrderDetail(OrderDetail orderDetail) {
+        this.orderDetail = orderDetail;
     }
 
     @Override
     public String toString() {
         return "BookingResponse{" +
-                "customerId=" + customerId +
-                ", checkinDate=" + checkinDate +
-                ", checkoutDate=" + checkoutDate +
-                ", _id=" + _id +
-                ", status='" + status + '\'' +
-                ", offers=" + offers +
-                ", orderId=" + orderId +
-                ", bookingInitiatedAt=" + bookingInitiatedAt +
-                ", bookingId=" + bookingId +
+                "orderDetail=" + orderDetail +
+                ", booking=" + booking +
                 '}';
     }
 
-    public class Offer {
-        OfferDetail offerDealDetail;
+    public class OrderDetail{
+        long orderId;
 
-        public List<SlotDetail> getSlotPrices() {
-            return slotPrices;
+        @Override
+        public String toString() {
+            return "OrderDetail{" +
+                    "orderId=" + orderId +
+                    ", orderLine=" + orderLines +
+                    '}';
         }
 
-        public void setSlotPrices(List<SlotDetail> slotPrices) {
-            this.slotPrices = slotPrices;
+        List<OrderLine> orderLines;
+
+        public long getOrderId() {
+            return orderId;
         }
 
-        List<SlotDetail> slotPrices;
-
-        public OfferDetail getOfferDealDetail() {
-            return offerDealDetail;
+        public void setOrderId(long orderId) {
+            this.orderId = orderId;
         }
 
-        public void setOfferDealDetail(OfferDetail offerDealDetail) {
-            this.offerDealDetail = offerDealDetail;
+        public List<OrderLine> getOrderLines() {
+            return orderLines;
+        }
+
+        public void setOrderLines(List<OrderLine> orderLines) {
+            this.orderLines = orderLines;
         }
     }
 
-    public class OfferDetail {
-        Long dealId;
-        List<Merchant> merchants;
-        String workflowType;
+    public class OrderLine {
+        ProductBo productBO;
 
         public String getWorkflowType() {
             return workflowType;
@@ -137,27 +85,103 @@ public class BookingResponse {
             this.workflowType = workflowType;
         }
 
-        public Long getDealId() {
-            return dealId;
+        String workflowType;
+
+        public ProductBo getProductBO() {
+            return productBO;
         }
 
-        public void setDealId(Long dealId) {
-            this.dealId = dealId;
+        @Override
+        public String toString() {
+            return "OrderLine{" +
+                    "productBO=" + productBO +
+                    ", workflowType='" + workflowType + '\'' +
+                    '}';
         }
 
-        public List<Merchant> getMerchants() {
+        public void setProductBO(ProductBo productBO) {
+            this.productBO = productBO;
+        }
+    }
+
+    public class ProductBo {
+        @Override
+        public String toString() {
+            return "ProductBo{" +
+                    "productId=" + productId +
+                    ", orderBomBOs=" + orderBomBOs +
+                    '}';
+        }
+
+        long productId;
+        List<OrderBomBOs> orderBomBOs;
+
+        public long getProductId() {
+            return productId;
+        }
+
+        public void setProductId(long productId) {
+            this.productId = productId;
+        }
+
+        public List<OrderBomBOs> getOrderBomBOs() {
+            return orderBomBOs;
+        }
+
+        public void setOrderBomBOs(List<OrderBomBOs> orderBomBOs) {
+            this.orderBomBOs = orderBomBOs;
+        }
+    }
+
+    public class OrderBomBOs {
+        String discount;
+
+        @Override
+        public String toString() {
+            return "OrderBomBOs{" +
+                    "discount='" + discount + '\'' +
+                    '}';
+        }
+
+        public String getDiscount() {
+            return discount;
+        }
+
+        public void setDiscount(String discount) {
+            this.discount = discount;
+        }
+
+        public double getCashback(){
+            return Double.valueOf(discount.split(",")[1].split((":"))[1]);
+        }
+    }
+
+    public class Offer {
+        OfferDealDetail offerDealDetail;
+
+        public OfferDealDetail getOfferDealDetail() {
+            return offerDealDetail;
+        }
+
+        public void setOfferDealDetail(OfferDealDetail offerDealDetail) {
+            this.offerDealDetail = offerDealDetail;
+        }
+    }
+
+    public class OfferDealDetail {
+        Merchant[] merchants;
+
+        public Merchant[] getMerchants() {
             return merchants;
         }
 
-        public void setMerchants(List<Merchant> merchants) {
+        public void setMerchants(Merchant[] merchants) {
             this.merchants = merchants;
         }
     }
 
     public class Merchant {
-        Long merchantId;
-        String name;
-        Location redemptionLocation;
+        private Long merchantId;
 
         public Long getMerchantId() {
             return merchantId;
@@ -165,113 +189,6 @@ public class BookingResponse {
 
         public void setMerchantId(Long merchantId) {
             this.merchantId = merchantId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Location getRedemptionLocation() {
-            return redemptionLocation;
-        }
-
-        public void setRedemptionLocation(Location redemptionLocation) {
-            this.redemptionLocation = redemptionLocation;
-        }
-    }
-
-    public class Location {
-        Double latitude;
-        Double longitude;
-        String cityTown;
-
-        public String getCityTown() {
-            return cityTown;
-        }
-
-        public void setCityTown(String cityTown) {
-            this.cityTown = cityTown;
-        }
-
-        public Double getLatitude() {
-            return latitude;
-        }
-
-        public void setLatitude(Double latitude) {
-            this.latitude = latitude;
-        }
-
-        public Double getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(Double longitude) {
-            this.longitude = longitude;
-        }
-    }
-
-    public class SlotDetail {
-        String date;
-        Long timeSlot;
-        Discount discount;
-
-        public Discount getDiscount() {
-            return discount;
-        }
-
-        public void setDiscount(Discount discount) {
-            this.discount = discount;
-        }
-
-        public String getDate() {
-            return date;
-        }
-
-
-        public void setDate(String date) {
-            this.date = date;
-        }
-
-        public Long getTimeSlot() {
-            return timeSlot;
-        }
-
-        public void setTimeSlot(Long timeSlot) {
-            this.timeSlot = timeSlot;
-        }
-    }
-
-    public class Discount {
-        Long percent;
-        Long maxCap;
-        Long minOrderValue;
-
-        public Long getPercent() {
-            return percent;
-        }
-
-        public void setPercent(Long percent) {
-            this.percent = percent;
-        }
-
-        public Long getMaxCap() {
-            return maxCap;
-        }
-
-        public void setMaxCap(Long maxCap) {
-            this.maxCap = maxCap;
-        }
-
-        public Long getMinOrderValue() {
-            return minOrderValue;
-        }
-
-        public void setMinOrderValue(Long minOrderValue) {
-            this.minOrderValue = minOrderValue;
         }
     }
 }

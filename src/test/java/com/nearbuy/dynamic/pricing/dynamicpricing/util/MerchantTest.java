@@ -25,8 +25,8 @@ public class MerchantTest {
 
     @Test
     public void TsetMerchantService() {
-        List<MerchantDetail> mids=merchantService.getMerchant(100002l);
-        logger.info(mids.toString()+"");
+        merchantService.getMerchant(100002l);
+
 
     }
 

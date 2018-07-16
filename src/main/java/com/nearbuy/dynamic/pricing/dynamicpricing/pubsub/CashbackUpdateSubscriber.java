@@ -1,5 +1,9 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.pubsub;
 
+import com.nearbuy.dynamic.pricing.model.Notification;
+import org.springframework.stereotype.Service;
+
+@Service
 public class CashbackUpdateSubscriber implements AppSubscriber{
 
     @Override
@@ -9,6 +13,6 @@ public class CashbackUpdateSubscriber implements AppSubscriber{
 
     @Override
     public Class getClazz() {
-        return null;
+        return Notification.class;
     }
 }

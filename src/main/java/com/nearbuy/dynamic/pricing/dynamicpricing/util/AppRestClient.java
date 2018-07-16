@@ -1,11 +1,13 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.util;
 
+import com.nearbuy.dynamic.pricing.dynamicpricing.Config.CacheManager;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.AppRestRequest;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.AppRestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,21 +24,18 @@ public class AppRestClient {
 
     private RestTemplate restTemplate;
 
-    public <T> AppRestResponse<T> firePost(AppRestRequest<String, String> req){
-        this.restTemplate=new RestTemplate();
-        logger.info(String.valueOf(req.getResponseType().getClass() == null));
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<?> httpEntity = new HttpEntity<Object>(req.getBody(), httpHeaders);
-        ResponseEntity response = restTemplate.exchange(req.getUrl(), HttpMethod.POST, httpEntity, req.getResponseType());
-        AppRestResponse<T> originalResponse = new AppRestResponse<>();
-        originalResponse.setBody((T)response.getBody());
-        return originalResponse;
-    }
+//    public <T> AppRestResponse<T> firePost(AppRestRequest<String, String> req){
+//        this.restTemplate=new RestTemplate();
+//        logger.info(String.valueOf(req.getResponseType().getClass() == null));
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<?> httpEntity = new HttpEntity<Object>(req.getBody(), httpHeaders);
+//        ResponseEntity response = restTemplate.exchange(req.getUrl(), HttpMethod.POST, httpEntity, req.getResponseType());
+//        AppRestResponse<T> originalResponse = new AppRestResponse<>();
+//        originalResponse.setBody((T)response.getBody());
+//        return originalResponse;
+//    }
 
-    public ResponseEntity<String> firePost(){
-        return null;
-    }
 
     public ResponseEntity<String> fireGet(String uri, Map<String, String> headers,Map<String, Object> uriVariables) {
         HttpEntity<String> request = null;
@@ -70,6 +69,40 @@ public class AppRestClient {
                 response = restTemplate.exchange(uri, method, entity, responseType, uriVariables);
         }
         return response;
+    }
+    public ResponseEntity<String> fireGetWithCaching(String uri, Map<String, String> headers,Map<String, Object> uriVariables) {
+        Object response = CacheManager.get(uri);
+        ResponseEntity<String> responseEntity ;
+        if(response == null){
+            responseEntity = fireGet(uri,headers,uriVariables);
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                CacheManager.add(responseEntity,uri);
+            }
+            return responseEntity;
+        }
+        return (ResponseEntity<String>)response;
+    }
+
+    public <T> ResponseEntity<String> firePostJson(String uri,Map<String, Object> uriVariables, String body) {
+        uriVariables = uriVariables == null ? new HashMap<>() : uriVariables;
+        MultiValueMap<String, String> headers = new HttpHeaders();
+//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
+        HttpEntity<String> request = new HttpEntity<>((body),headers);
+        return fire(uri,HttpMethod.POST,request,String.class,uriVariables,null);
+    }
+
+    public ResponseEntity<String> firePostJsonWithCaching(String uri,Map<String, Object> uriVariables, String body) {
+        Object response = CacheManager.get(uri+body);
+        ResponseEntity<String> responseEntity ;
+        if(response == null){
+            responseEntity = firePostJson(uri,uriVariables,body);
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                CacheManager.add(responseEntity,uri+body);
+            }
+            return responseEntity;
+        }
+        return (ResponseEntity<String>)response;
     }
 }
 

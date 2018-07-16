@@ -20,18 +20,17 @@ import java.util.List;
 @Service
 public class MerchantService {
     private static final Logger logger=LoggerFactory.getLogger(MerchantService.class);
-    private static String MERCHANT_SERVICE="http://merchant-platform.iwanto.in/api/v1";
+    private static final String IsPublished ="true" ;
+    private static String MERCHANT_SERVICE="http://merchant-platform.iwanto.in/api/v2/merchant/";
 
     @Autowired
     private AppRestClient client;
-
-    public List<MerchantDetail> getMerchant(Long hostId)
+    //FIXME:CREATE MERCHANTRESPONSE CLASS FOR GETTING RESPONSE IN POJO
+    public MerchantDetail getMerchant(Long hostId)
     {
-        ResponseEntity<String> resp=client.fireGet(MERCHANT_SERVICE+ "/merchant?hotspotId=" + hostId,null,null);
+        ResponseEntity<String> resp=client.fireGet(MERCHANT_SERVICE + hostId+"?publishedState="+IsPublished,null,null);
         if(resp.getStatusCode().is2xxSuccessful()) {
-            APIResponse<List<MerchantDetail>> apiResponse = AppUtil.parseJson(resp.getBody(), new TypeToken<APIResponse<List<MerchantDetail>>>() {
-            }.getType());
-            return apiResponse.getRs();
+            return AppUtil.getFromJson(resp.getBody(), MerchantDetail.class);
         }else{
             logger.warn("Invalid response from merchant service for hotspot : {}", hostId);
             return null;
