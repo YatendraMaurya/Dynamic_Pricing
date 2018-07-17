@@ -39,11 +39,12 @@ public class MerchantDiscoveryResponse {
         List<Merchant> merchants;
     }
 
-    private class Merchant {
+    public class Merchant {
         @Override
         public String toString() {
             return "Merchant{" +
                     "merchantId=" + merchantId +
+                    ", distanceFromUser=" + distanceFromUser +
                     '}';
         }
 
@@ -56,5 +57,14 @@ public class MerchantDiscoveryResponse {
         }
 
         long merchantId;
+        Double distanceFromUser;
+
+        public Double getDistanceFromUser() {
+            return distanceFromUser;
+        }
+
+        public void setDistanceFromUser(Double distanceFromUser) {
+            this.distanceFromUser = distanceFromUser;
+        }
     }
 }

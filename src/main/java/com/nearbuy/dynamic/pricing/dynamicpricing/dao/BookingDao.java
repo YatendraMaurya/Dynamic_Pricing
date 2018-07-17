@@ -6,6 +6,8 @@ import com.mongodb.client.model.Updates;
 import com.nearbuy.dynamic.pricing.dynamicpricing.Config.MongoConfig;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.model.PalBooking;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.BookingResponse;
+import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppConstants;
+import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppUtil;
 import com.nearbuy.dynamic.pricing.model.Booking;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -41,7 +44,7 @@ public class BookingDao {
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
 
-    public void addbooking(long merchantid, String status, long orderid, float latitude, float longitude, ArrayList<Double> cashcback, long time) {
+    public void addbooking(long merchantid, String status, long orderid, Double latitude, Double longitude, ArrayList<Double> cashcback, long time) {
         Document doc=new Document(MERCHANT_ID,merchantid).append(STATUS,status).append(ORDER_ID,orderid).append(CASH_BACK,cashcback).
                 append(TIMESLOT,time).append(LATITUDE,latitude).append(LONGITUDE,longitude);
         BookingCollection.insertOne(doc);
@@ -63,6 +66,21 @@ public class BookingDao {
     {
         Object palBooking= BookingCollection.find(eq("_id", new ObjectId(objectid)),PalBooking.class).first();
         logger.info(palBooking.toString());
+    }
+
+    public HashMap<Long, Long> getBookingCount(ArrayList<Long> merchantIds){
+        HashMap<Long, Long> retval = new HashMap<>();
+        for(Long merchantId : merchantIds){
+            if(BookingCollection.find(Filters.and(Filters.eq(MERCHANT_ID, merchantId) ,
+                    Filters.gte(TIMESLOT+AppConstants.MINUTE, AppUtil.currentTime()))) != null){
+                if(!retval.containsKey(merchantId)){
+                    retval.put(merchantId, 1l);
+                } else {
+                    retval.put(merchantId, retval.get(merchantId)+1);
+                }
+            }
+        }
+        return retval;
     }
 
 

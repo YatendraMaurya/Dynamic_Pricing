@@ -28,7 +28,7 @@ public class MerchantService {
     //FIXME:CREATE MERCHANTRESPONSE CLASS FOR GETTING RESPONSE IN POJO
     public MerchantDetail getMerchant(Long hostId)
     {
-        ResponseEntity<String> resp=client.fireGet(MERCHANT_SERVICE + hostId+"?publishedState="+IsPublished,null,null);
+        ResponseEntity<String> resp=client.fireGetWithCaching(MERCHANT_SERVICE + hostId+"?publishedState="+IsPublished,null,null);
         if(resp.getStatusCode().is2xxSuccessful()) {
             return AppUtil.getFromJson(resp.getBody(), MerchantDetail.class);
         }else{

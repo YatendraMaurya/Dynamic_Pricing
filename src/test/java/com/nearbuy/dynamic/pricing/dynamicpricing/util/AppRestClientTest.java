@@ -19,6 +19,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nearbuy.dynamic.pricing.dynamicpricing.Config.CacheManager.map;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AppRestClientTest {
@@ -32,42 +34,14 @@ public class AppRestClientTest {
     MerchantService merchantService;
 
     public static final Logger logger = LoggerFactory.getLogger(AppRestClientTest.class);
-    String  body="{  " +
-            "   \"offersOnly\":true," +
-            "   \"offset\":0," +
-            "   \"count\":30," +
-            "   \"vertical\":\"LOCAL\"," +
-            "   \"categoryIds\":[  " +
-            "      \"FNB\"" +
-            "   ]," +
-            "   \"sortOrder\":\"SCORE_NEAR_BY\"," +
-            "   \"sortPattern\":\"ASC\"," +
-            "   \"customerId\":10000001781," +
-            "   \"workflowTypes\":[  " +
-            "      \"BOOKING_TYPE2\"" +
-            "   ]," +
-            "   \"source\":\"MOBILE\"," +
-            "   \"location\":{  " +
-            "      \"coordinates\":{  " +
-            "         \"lat\":28.4436064," +
-            "         \"lng\":77.1000444" +
-            "      }," +
-            "      \"radius\":50" +
-            "   }," +
-            "   \"dates\":{  " +
-            "      \"startDate\":1530037800000," +
-            "      \"endDate\":1530037800000" +
-            "   }," +
-            "   \"context\":{  " +
-            "      \"categoryId\":\"FNB\"" +
-            "   }" +
-            "}";
+
+    DiscoveryPostRequest discoveryPostRequest=new DiscoveryPostRequest("10000001781",Long.valueOf(50),"1530037800000","1530037800000",28.4436064,77.1000444);
+
 
     @Test
     public void PostRequestTest() {
-        MerchantDiscoveryResponse merchantDiscoveryResponse =Dservice.getDiscoveryDetail(body);
+        MerchantDiscoveryResponse merchantDiscoveryResponse =Dservice.getDiscoveryDetail(discoveryPostRequest);
         logger.info(merchantDiscoveryResponse.toString());
-
     }
 
     @Test
@@ -82,19 +56,26 @@ public class AppRestClientTest {
         logger.info(cashbacks.toString());
         logger.info(bookingResponse.getBooking().getOffers()[0].getOfferDealDetail().getMerchants()[0].getMerchantId()+"");
         logger.info(bookingResponse.toString());
+        logger.info(bookingResponse.getBooking().getBookingInitiatedAt()+"");
+        logger.info(bookingResponse.getBooking().getOffers()[0].getSlotPrices()[0].getDate());
+        logger.info(bookingResponse.getBooking().getOffers()[0].getSlotPrices()[0].getTimeSlot()+"");
+        logger.info(bookingResponse.getOrderDetail().getCustomerId()+"");
     }
 
     @Test
     public void MerchantTest() {
         MerchantDetail merchantDetail=merchantService.getMerchant(63175L);
         logger.info(merchantDetail.getAddress().getLatitude()+" "+merchantDetail.getAddress().getLongitude()+"");
+        logger.info(map.size()+"");
         //Assert.assertFalse(mids.isEmpty());
     }
 
     @Autowired
     BookingDao bookingDao;
+
     @Test
     public void Mongotest(){
         bookingDao.getBookingbyOrderId("5b4c73849cef6163d7a2886a");
     }
+
 }

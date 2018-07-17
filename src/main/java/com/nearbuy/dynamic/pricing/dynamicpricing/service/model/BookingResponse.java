@@ -19,6 +19,15 @@ public class BookingResponse {
 
     public class Booking{
         Offer[] offers;
+        long bookingInitiatedAt;
+
+        public long getBookingInitiatedAt() {
+            return bookingInitiatedAt;
+        }
+
+        public void setBookingInitiatedAt(long bookingInitiatedAt) {
+            this.bookingInitiatedAt = bookingInitiatedAt;
+        }
 
         public Offer[] getOffers() {
             return offers;
@@ -46,6 +55,15 @@ public class BookingResponse {
 
     public class OrderDetail{
         long orderId;
+        long customerId;
+
+        public long getCustomerId() {
+            return customerId;
+        }
+
+        public void setCustomerId(long customerId) {
+            this.customerId = customerId;
+        }
 
         @Override
         public String toString() {
@@ -157,6 +175,16 @@ public class BookingResponse {
     }
 
     public class Offer {
+        SlotPrice[] slotPrices;
+
+        public SlotPrice[] getSlotPrices() {
+            return slotPrices;
+        }
+
+        public void setSlotPrices(SlotPrice[] slotPrices) {
+            this.slotPrices = slotPrices;
+        }
+
         OfferDealDetail offerDealDetail;
 
         public OfferDealDetail getOfferDealDetail() {
@@ -189,6 +217,27 @@ public class BookingResponse {
 
         public void setMerchantId(Long merchantId) {
             this.merchantId = merchantId;
+        }
+    }
+
+    public class SlotPrice {
+        long timeSlot;
+        String date;
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public long getTimeSlot() {
+            return timeSlot;
+        }
+
+        public void setTimeSlot(long timeSlot) {
+            this.timeSlot = timeSlot;
         }
     }
 }

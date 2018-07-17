@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CacheManager {
-    private static final long DEFAULT_EXPIRY_TIME = 10000l;
+    private static final long DEFAULT_EXPIRY_TIME = AppUtil.currentTime()+ 10000l;
     private static  Logger logger = LoggerFactory.getLogger(CacheManager.class);
     public static int maxSize = 1000;
 
@@ -19,7 +19,7 @@ public class CacheManager {
         map.clear();
     }
 
-    static Map<String, CerebroCachable> map = Collections.synchronizedMap(new LinkedHashMap(maxSize){
+    public static Map<String, DynamicPricingCachable> map = Collections.synchronizedMap(new LinkedHashMap(maxSize){
         @Override
         protected boolean removeEldestEntry(Map.Entry eldest) {
             return size() > maxSize;
@@ -28,7 +28,7 @@ public class CacheManager {
 
     public static Object get(String key) {
         if (map.containsKey(key)) {
-            CerebroCachable val = map.remove(key);
+            DynamicPricingCachable val = map.remove(key);
             if(val == null){
                 return null;
             }
@@ -44,7 +44,7 @@ public class CacheManager {
         return null;
     }
 
-    private static boolean hasExpired(CerebroCachable val) {
+    private static boolean hasExpired(DynamicPricingCachable val) {
         return val.getExpiresAt() < AppUtil.currentTime();
     }
 
@@ -57,15 +57,15 @@ public class CacheManager {
         if(map.containsKey(key)){
             map.remove(key);
         }
-        map.put(key, new CerebroCachable(val, expiresIn + AppUtil.currentTime()));
+        map.put(key, new DynamicPricingCachable(val, expiresIn + AppUtil.currentTime()));
         logger.info("added to cache : {}", key);
     }
 
-    private static class CerebroCachable {
+    private static class DynamicPricingCachable {
         private Object value;
         Long expiresAt;
 
-        public CerebroCachable(Object value, Long expiresAt) {
+        public DynamicPricingCachable(Object value, Long expiresAt) {
             this.value = value;
             this.expiresAt = expiresAt;
         }

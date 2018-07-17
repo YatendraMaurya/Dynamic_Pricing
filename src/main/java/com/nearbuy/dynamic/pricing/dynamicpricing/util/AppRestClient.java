@@ -70,6 +70,16 @@ public class AppRestClient {
         }
         return response;
     }
+
+    public <T> ResponseEntity<String> firePostJson(String uri,Map<String, Object> uriVariables, String body) {
+        uriVariables = uriVariables == null ? new HashMap<>() : uriVariables;
+        MultiValueMap<String, String> headers = new HttpHeaders();
+//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
+        HttpEntity<String> request = new HttpEntity<>((body),headers);
+        return fire(uri,HttpMethod.POST,request,String.class,uriVariables,null);
+    }
+
     public ResponseEntity<String> fireGetWithCaching(String uri, Map<String, String> headers,Map<String, Object> uriVariables) {
         Object response = CacheManager.get(uri);
         ResponseEntity<String> responseEntity ;
@@ -81,15 +91,6 @@ public class AppRestClient {
             return responseEntity;
         }
         return (ResponseEntity<String>)response;
-    }
-
-    public <T> ResponseEntity<String> firePostJson(String uri,Map<String, Object> uriVariables, String body) {
-        uriVariables = uriVariables == null ? new HashMap<>() : uriVariables;
-        MultiValueMap<String, String> headers = new HttpHeaders();
-//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
-        HttpEntity<String> request = new HttpEntity<>((body),headers);
-        return fire(uri,HttpMethod.POST,request,String.class,uriVariables,null);
     }
 
     public ResponseEntity<String> firePostJsonWithCaching(String uri,Map<String, Object> uriVariables, String body) {
