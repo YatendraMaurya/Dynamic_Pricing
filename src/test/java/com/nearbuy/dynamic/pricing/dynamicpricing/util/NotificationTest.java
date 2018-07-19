@@ -20,8 +20,5 @@ public class NotificationTest {
     @Autowired
     NotificationService t1;
 
-    @Test
-    public void isOpened(){
-        Assert.assertEquals(t1.getNotificationStatus(81l), AppConstants.NOTIFICATION_STATUS.FAILED);
-    }
+
 }

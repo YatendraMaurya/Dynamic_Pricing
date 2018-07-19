@@ -1,6 +1,7 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.service;
 
 import com.google.gson.reflect.TypeToken;
+import com.nearbuy.dynamic.pricing.dynamicpricing.dao.NotificationDao;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppConstants;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppRestClient;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppUtil;
@@ -25,84 +26,63 @@ public class NotificationService {
     @Autowired
     AppRestClient restClient;
 
+    @Autowired
+    NotificationDao notificationDao;
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final String url = "http://nbdeliverymanager.nearbuytoolsstag.in/api/v1/communication";
 
-    private static final String COMMUNICATION_NAME = "%COMMUNICATION_NAME%";
-    private static final String PLACEHOLDER_MAP = "%PLACEHOLDER_MAP%";
-    private static final String TEMPLATE_ID = "%TEMPLATE_ID%";
-    private static final String CUSTOMER_ID = "%CUSTOMER_ID";
-    private static final String COMMUNICATION_TYPE = "%COMMUNICATION_TYPE%";
-    private static final String DOES_DND_APPLIES = "%DOES_DND_APPLIES%";
-    private static final String GENERIC_LIST = "generic-list";
-    /**
-     * 1, 2, 3 => high medium low
-     */
-    private static final String MULTICHANNEL_COM_MEDIUM_HIGH = "%medium1%";
-    private static final String MULTICHANNEL_COM_MEDIUM_LOW = "%medium2%";
-    private static final String MULTICHANNEL_COMMUNICATION_MEDIUM = "["+MULTICHANNEL_COM_MEDIUM_HIGH+"],["+MULTICHANNEL_COM_MEDIUM_LOW+"]";
-    private static final String PRIORITY = "%PRIORITY%";
-    private static final String EXPIRES_AT = "%EXPIRES_AT%";
-    private static final String UTM_TERM = "%UTM_TERM%";
-    private static final String IN_APP_TRACKING = "%IN_APP_TRACKING%";
-    private static final String UTM_SOURCE = "%UTM_SOURCE%";
-    private static final String CAMPAIGN_ID = "%CAM_ID%";
-    private static final String INTERNAL_CAMPAIGN_NAME = "%INTERNAL_CAMPAIGN_NAME%";
-    private static final String IN_APP_LABEL = "%IN_APP_LABEL%";
-    private static final String PRIORITY_FIELD = "  \"priority\": " + PRIORITY + ",";
-    private static final String COMMUNICATION_MEDIUM = "%COMM_MEDIUM%";
-    private static final String IN_APP_UTM =
-            "  \"category\": "+"\"notifications-cerebro\","+
-                    "  \"label\": "+"\""+ IN_APP_LABEL +"\","+
-                    "  \"internalCampaignName\": "+"\""+ INTERNAL_CAMPAIGN_NAME +"\",";
-    private static final String DEFAULT_PAYLOAD = "{"+
-            "  \"communicationMedium\": ["+COMMUNICATION_MEDIUM+""+
-            "  ],"+
-            "  \"communicationName\": "+"\""+ COMMUNICATION_NAME +"\", "+
-//            "  \"utmTerm\": "+"\""+ UTM_TERM +"\","+
-            IN_APP_TRACKING+
-            "  \"campaignId\": "+"\""+ CAMPAIGN_ID +"\","+
-            "  \"enforceDndLimits\": "+"\""+ DOES_DND_APPLIES +"\","+
-            "  \"expiresAt\": "+EXPIRES_AT+","+
-            PRIORITY_FIELD+
-            "  \"utmSource\": \""+UTM_SOURCE+"\","+
-            "  \"communicationType\": "+COMMUNICATION_TYPE+","+
-            "  \"createdBy\": \"CEREBRO\","+
-            "  \"templateCommunicationVO\": {"+
-            "    \"placeHolderMap\": "+PLACEHOLDER_MAP+""+
-            ","+
-            "    \"templateId\": "+TEMPLATE_ID+""+
-            "  },"+
-            "  \"userCommunication\": {"+
-            "    \"userType\": 2,"+
-            "    \"users\": ["+ CUSTOMER_ID+"]"+
-            "  }"+
+    private String postBody = "{\n" +
+            "  \"communicationName\": \"dynamicCashbackForMerchant\",\n" +
+            "  \"communicationType\": 1,\n" +
+            "  \"communicationMedium\": [\n" +
+            "    2\n" +
+            "  ],\n" +
+            "  \"createdBy\": \"DYNAMIC_PRICING\",\n" +
+            "  \"templateCommunicationVO\": {\n" +
+            "    \"templateId\": " + TEMPLATE_ID + ",\n" +
+            "    \"placeHolderMap\": {\n" +
+            "      \"CTA\": \"sdfghj\",\n" +
+            "      \"CASHBACK_FROM\": \"" + CASHBACK_FROM + "\",\n" +
+            "      \"CASHBACK_TO\": \"" + CASHBACK_TO + "\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"userCommunication\": {\n" +
+            "    \"userType\": 1,\n" +
+            "    \"users\": [\n" +
+            "      " + USERS +
+            "    ]\n" +
+            "  },\n" +
+            "  \"utmSource\": \"sonar\",\n" +
+            "  \"trimPushNotification\": true\n" +
             "}";
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final int CASHBACK_FROM = -1;
+    private static final int CASHBACK_TO = -2;
+    private static final String USERS = "%USERS%";
+    private static final String TEMPLATE_ID = "%TEMPLATE_ID%";
 
-    private static final String url = "http://nbdeliverymanager.nearbuytoolsstag.in/api/v1/communication";
-
-    public Long send(){
-        return null;
-    }
-
-    public Integer getNotificationStatus(Long id) {
-        String uri = "http://nbdeliverymanager.nearbuytoolsstag.in/api/v1/communication/"+id+"/stats";
-        ResponseEntity<String> response = restClient.fireGet(uri, null, null);
-        logger.info("%%%%%%%%%%%%"+response.getStatusCode().toString());
-        logger.info(response.getBody().toString());
-        if(!response.getStatusCode().is2xxSuccessful()){
-            throw new RuntimeException("exception from delivery manager in fetching notif open status for id " + id);
-        }else{
-            logger.info(response.getBody());
-//            [{"lifeCycleStatus":80,"total":1}]
-//            List<Map> res = AppUtil.parseJson(response.getBody(), new TypeToken<List<Map>>() {
-//            }.getType());
-//            int status = (int) Double.parseDouble(res.get(0).get("lifeCycleStatus").toString());
-//            if(status==OPENED) return AppConstants.NOTIFICATION_STATUS.OPENED;
-//            if(status==FAILED) return AppConstants.NOTIFICATION_STATUS.FAILED;
-//            if(status==DELIVERED1 || status==DELIVERED2) return AppConstants.NOTIFICATION_STATUS.SUCCESS;
-//            return null;
-            return 1;
+    public Long send(Long mid,List<Long> users, int templateId, Double cashback_from, Double cashback_to){
+        StringBuilder userArray = new StringBuilder();
+        for(Long num : users){
+            userArray.append("\"").append(num).append("\"").append(',');
+        }
+        userArray.deleteCharAt(userArray.length() - 1);
+        String userArr = userArray.toString();
+        this.postBody = this.postBody.replace(TEMPLATE_ID, String.valueOf(templateId)).
+                replace(String.valueOf(CASHBACK_FROM), String.valueOf(cashback_from)).
+                replace(String.valueOf(CASHBACK_TO), String.valueOf(cashback_to)).replace(USERS, userArr);
+        logger.info(postBody);
+        ResponseEntity<String> res=restClient.firePostJson(url,null,postBody);
+        if (res.getStatusCode().is2xxSuccessful()) {
+            logger.info(AppUtil.getFromJson(res.getBody(), Long.class).toString());
+            for(Long user:users){
+                notificationDao.addNotification(mid,user,cashback_from,cashback_to,AppUtil.currentTime(),templateId);
+                logger.info("Successfully added");
+            }
+            return AppUtil.getFromJson(res.getBody(), Long.class);
+        } else {
+            logger.error("Cound not Send Notification");
+            return null;
         }
     }
 

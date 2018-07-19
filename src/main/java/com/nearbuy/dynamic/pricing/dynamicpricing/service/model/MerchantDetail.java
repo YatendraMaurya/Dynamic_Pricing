@@ -4,6 +4,15 @@ import java.io.Serializable;
 
 public class MerchantDetail {
     Addres address;
+    Long businessAccountId;
+
+    public Long getBusinessAccountId() {
+        return businessAccountId;
+    }
+
+    public void setBusinessAccountId(Long businessAccountId) {
+        this.businessAccountId = businessAccountId;
+    }
 
     @Override
     public String toString() {

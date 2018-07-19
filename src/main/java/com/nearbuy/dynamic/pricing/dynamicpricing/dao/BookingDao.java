@@ -43,11 +43,13 @@ public class BookingDao {
     public static final String CANCELLED = "CANCELLED";
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
+    public static final String ACCOUNT_ID = "businessAccId";
 
-    public void addbooking(long merchantid, String status, long orderid, Double latitude, Double longitude, ArrayList<Double> cashcback, long time) {
+    public void addbooking(long merchantid, String status, long orderid, Double latitude, Double longitude, ArrayList<Double> cashcback, long time,Long accountid) {
         Document doc=new Document(MERCHANT_ID,merchantid).append(STATUS,status).append(ORDER_ID,orderid).append(CASH_BACK,cashcback).
-                append(TIMESLOT,time).append(LATITUDE,latitude).append(LONGITUDE,longitude);
+                append(TIMESLOT,time).append(LATITUDE,latitude).append(LONGITUDE,longitude).append(ACCOUNT_ID,accountid);
         BookingCollection.insertOne(doc);
+        logger.info("Added to MongoDatabase");
     }
     public void cancelBooking(long orderid) {
         BookingCollection.updateOne(Filters.eq(ORDER_ID,orderid), Updates.set(STATUS,CANCELLED));
@@ -69,21 +71,22 @@ public class BookingDao {
     }
 
     public HashMap<Long, Long> getBookingCount(ArrayList<Long> merchantIds){
+        logger.info(merchantIds.toString());
         HashMap<Long, Long> retval = new HashMap<>();
         for(Long merchantId : merchantIds){
             if(BookingCollection.find(Filters.and(Filters.eq(MERCHANT_ID, merchantId) ,
-                    Filters.gte(TIMESLOT+AppConstants.MINUTE, AppUtil.currentTime()))) != null){
+                    Filters.gte(TIMESLOT, AppUtil.currentTime() - AppConstants.MINUTE))).first() != null){
                 if(!retval.containsKey(merchantId)){
+                    logger.info("IN BOOKING COUNT IF");
+                    logger.info(merchantId+"");
                     retval.put(merchantId, 1l);
                 } else {
+                    logger.info("IN BOOKING COUNT");
+                    logger.info(merchantId+"");
                     retval.put(merchantId, retval.get(merchantId)+1);
                 }
             }
         }
         return retval;
     }
-
-
-
-
 }

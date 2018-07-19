@@ -51,7 +51,7 @@ public class SubscriberConfig {
     private Properties getProps(){
         Properties props = new Properties();
         props.put("bootstrap.servers", "localhost:9092");
-        props.put("group.id", "dynamic_pricin");
+        props.put("group.id", "dynamicpricing687");
         props.put("enable.auto.commit", true);
         props.put("max.poll.records", 5);
         props.put("auto.commit.interval.ms", 1000);

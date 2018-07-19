@@ -10,6 +10,16 @@ public class PalBooking {
     private float latitude;
     private float longitude;
     private long time;
+    private Long businessAccId;
+
+    public Long getBusinessAccId() {
+        return businessAccId;
+    }
+
+    public void setBusinessAccId(Long businessAccId) {
+        this.businessAccId = businessAccId;
+    }
+
     private ArrayList<Double> cahsback;
 
     public long getOrderid() {
@@ -77,6 +87,7 @@ public class PalBooking {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", time=" + time +
+                ", businessAccId=" + businessAccId +
                 ", cahsback=" + cahsback +
                 '}';
     }

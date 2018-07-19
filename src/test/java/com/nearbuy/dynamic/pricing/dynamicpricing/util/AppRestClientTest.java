@@ -2,9 +2,9 @@ package com.nearbuy.dynamic.pricing.dynamicpricing.util;
 
 import com.google.gson.Gson;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.BookingDao;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.BookingService;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.DiscoveryService;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.MerchantService;
+import com.nearbuy.dynamic.pricing.dynamicpricing.dao.NotificationDao;
+import com.nearbuy.dynamic.pricing.dynamicpricing.dao.model.NotificationMongoModel;
+import com.nearbuy.dynamic.pricing.dynamicpricing.service.*;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,6 +33,9 @@ public class AppRestClientTest {
     @Autowired
     MerchantService merchantService;
 
+    @Autowired
+    NotificationService notificationService;
+
     public static final Logger logger = LoggerFactory.getLogger(AppRestClientTest.class);
 
     DiscoveryPostRequest discoveryPostRequest=new DiscoveryPostRequest("10000001781",Long.valueOf(50),"1530037800000","1530037800000",28.4436064,77.1000444);
@@ -46,7 +49,7 @@ public class AppRestClientTest {
 
     @Test
     public void BookingserviceTest()  {
-        BookingResponse bookingResponse=service.getBookingDetails(3826720L);
+        BookingResponse bookingResponse=service.getBookingDetails(3831569l);
         ArrayList<Double> cashbacks = new ArrayList<>();
         for(BookingResponse.OrderLine orderLine : bookingResponse.getOrderDetail().getOrderLines()){
             for(BookingResponse.OrderBomBOs orderBomBOs : orderLine.getProductBO().getOrderBomBOs()){
@@ -67,6 +70,7 @@ public class AppRestClientTest {
         MerchantDetail merchantDetail=merchantService.getMerchant(63175L);
         logger.info(merchantDetail.getAddress().getLatitude()+" "+merchantDetail.getAddress().getLongitude()+"");
         logger.info(map.size()+"");
+        logger.info(merchantDetail.getBusinessAccountId()+"");
         //Assert.assertFalse(mids.isEmpty());
     }
 
@@ -75,7 +79,33 @@ public class AppRestClientTest {
 
     @Test
     public void Mongotest(){
-        bookingDao.getBookingbyOrderId("5b4c73849cef6163d7a2886a");
+        bookingDao.getBookingbyOrderId("5b4f28539cef617d71266ac9");
+    }
+
+    @Autowired
+    AccountService accountService;
+
+    @Test
+    public void Accounttest(){
+        List<Long> res=accountService.getDecisonMaker(1000003l);
+        logger.info(res.toString());
+    }
+
+
+    @Test
+    public void postbodytest(){
+        List<Long> a=new ArrayList<>();
+        a.add(1052571l);
+        notificationService.send(63175l,a,260,20.0,30.0);
+    }
+
+    @Autowired
+    NotificationDao notificationDao;
+
+    @Test
+    public void NotificationMongo(){
+        NotificationMongoModel notificationMongo=notificationDao.getNotificationById(1052571l);
+        logger.info(notificationMongo.toString());
     }
 
 }

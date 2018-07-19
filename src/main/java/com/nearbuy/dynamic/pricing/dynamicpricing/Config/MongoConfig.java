@@ -1,18 +1,17 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.Config;
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.BookingDao;
+import com.nearbuy.dynamic.pricing.dynamicpricing.dao.NotificationDao;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.codec.BookingCodec;
+import com.nearbuy.dynamic.pricing.dynamicpricing.dao.codec.NotifictionCodec;
+import com.nearbuy.dynamic.pricing.dynamicpricing.dao.model.NotificationMongoModel;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.model.PalBooking;
-import com.nearbuy.dynamic.pricing.model.Booking;
 import org.bson.BsonBoolean;
 import org.bson.BsonDocument;
 import org.bson.Document;
-import org.bson.Transformer;
 import org.bson.codecs.*;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistries;
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 //import org.bson.codecs.configuration.CodecProvider;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,9 +55,10 @@ public class MongoConfig {
         return coll;
     }
 
-    @Bean(name = "Notification")
+    @Bean(name = "Notification_Collection")
     public MongoCollection<Document> getNotificationCollection(){
         MongoCollection<Document> coll =getDb().getCollection("Notification");
+        coll.createIndex(new Document(NotificationDao.USER_ID,1));
         return coll;
     }
 
@@ -74,6 +73,7 @@ public class MongoConfig {
         map.put(Boolean.class, new BooleanCodec());
         map.put(BsonBoolean.class, new BsonBooleanCodec());
         map.put(PalBooking.class,new BookingCodec());
+        map.put(NotificationMongoModel.class,new NotifictionCodec());
         map.put(ObjectId.class,new ObjectIdCodec());
         return new DocumentCodecProvider(map);
     }

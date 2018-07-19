@@ -20,6 +20,7 @@ public class BookingCodec extends AppCodec<PalBooking> {
         booking.setStatus(doc.getString(BookingDao.STATUS));
         booking.setTime(doc.getLong(BookingDao.TIMESLOT));
         booking.setMerchantid(doc.getLong(BookingDao.MERCHANT_ID));
+        booking.setBusinessAccId(doc.getLong(BookingDao.ACCOUNT_ID));
         return booking;
     }
 
@@ -33,6 +34,7 @@ public class BookingCodec extends AppCodec<PalBooking> {
         document.put(BookingDao.LONGITUDE,booking.getLongitude());
         document.put(BookingDao.LATITUDE,booking.getLatitude());
         document.put(BookingDao.CASH_BACK,booking.getCahsback());
+        document.put(BookingDao.ACCOUNT_ID,booking.getBusinessAccId());
         return  document;
     }
 }

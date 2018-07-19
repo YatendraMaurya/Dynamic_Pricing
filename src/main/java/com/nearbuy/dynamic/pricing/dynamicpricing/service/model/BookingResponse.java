@@ -2,12 +2,21 @@ package com.nearbuy.dynamic.pricing.dynamicpricing.service.model;
 
 import com.google.gson.JsonObject;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class BookingResponse {
 
     private OrderDetail orderDetail;
     private Booking booking;
+
+    @Override
+    public String toString() {
+        return "BookingResponse{" +
+                "orderDetail=" + orderDetail +
+                ", booking=" + booking +
+                '}';
+    }
 
     public Booking getBooking() {
         return booking;
@@ -19,6 +28,15 @@ public class BookingResponse {
 
     public class Booking{
         Offer[] offers;
+
+        @Override
+        public String toString() {
+            return "Booking{" +
+                    "offers=" + Arrays.toString(offers) +
+                    ", bookingInitiatedAt=" + bookingInitiatedAt +
+                    '}';
+        }
+
         long bookingInitiatedAt;
 
         public long getBookingInitiatedAt() {
@@ -43,14 +61,6 @@ public class BookingResponse {
 
     public void setOrderDetail(OrderDetail orderDetail) {
         this.orderDetail = orderDetail;
-    }
-
-    @Override
-    public String toString() {
-        return "BookingResponse{" +
-                "orderDetail=" + orderDetail +
-                ", booking=" + booking +
-                '}';
     }
 
     public class OrderDetail{
@@ -175,6 +185,14 @@ public class BookingResponse {
     }
 
     public class Offer {
+        @Override
+        public String toString() {
+            return "Offer{" +
+                    "slotPrices=" + Arrays.toString(slotPrices) +
+                    ", offerDealDetail=" + offerDealDetail +
+                    '}';
+        }
+
         SlotPrice[] slotPrices;
 
         public SlotPrice[] getSlotPrices() {
@@ -199,6 +217,13 @@ public class BookingResponse {
     public class OfferDealDetail {
         Merchant[] merchants;
 
+        @Override
+        public String toString() {
+            return "OfferDealDetail{" +
+                    "merchants=" + Arrays.toString(merchants) +
+                    '}';
+        }
+
         public Merchant[] getMerchants() {
             return merchants;
         }
@@ -209,6 +234,13 @@ public class BookingResponse {
     }
 
     public class Merchant {
+        @Override
+        public String toString() {
+            return "Merchant{" +
+                    "merchantId=" + merchantId +
+                    '}';
+        }
+
         private Long merchantId;
 
         public Long getMerchantId() {
@@ -223,6 +255,14 @@ public class BookingResponse {
     public class SlotPrice {
         long timeSlot;
         String date;
+
+        @Override
+        public String toString() {
+            return "SlotPrice{" +
+                    "timeSlot=" + timeSlot +
+                    ", date='" + date + '\'' +
+                    '}';
+        }
 
         public String getDate() {
             return date;

@@ -1,9 +1,9 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.pubsub;
 
+import com.mongodb.client.MongoCollection;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.BookingDao;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.BookingService;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.DiscoveryService;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.MerchantService;
+import com.nearbuy.dynamic.pricing.dynamicpricing.dao.NotificationDao;
+import com.nearbuy.dynamic.pricing.dynamicpricing.service.*;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.BookingResponse;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.DiscoveryPostRequest;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.MerchantDetail;
@@ -18,12 +18,15 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
 public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
 
     public static final Logger logger=LoggerFactory.getLogger(BookingSubscriber.class);
+    public static final int tempid = 260;
     public final static String WORKFLOW_TYPE = "BOOKING_TYPE2";
     @Autowired
     BookingService bookingService;
@@ -35,7 +38,16 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
     BookingDao bookingDao;
 
     @Autowired
+    NotificationService notificationService;
+
+    @Autowired
     DiscoveryService discoveryService;
+
+    @Autowired
+    AccountService accountService;
+
+    @Autowired
+    NotificationDao notificationDao;
 
     public final String DATE_FORMAT = "yyyy-MM-dd";
 
@@ -52,6 +64,7 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                 long time=bookingResponse.getBooking().getBookingInitiatedAt();
                 logger.info("Adding the booking in the mongo collection: "+AppUtil.toJson(booking));
                 long merchantid=bookingResponse.getBooking().getOffers()[0].getOfferDealDetail().getMerchants()[0].getMerchantId();
+                logger.info(merchantid+"");
                 MerchantDetail merchantDetail=merchantService.getMerchant(merchantid);
                 Double latitude=merchantDetail.getAddress().getLatitude();
                 Double longitude=merchantDetail.getAddress().getLongitude();
@@ -68,19 +81,41 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                bookingDao.addbooking(merchantid,"ok",bookingResponse.getOrderDetail().getOrderId(),latitude,longitude,cashbacks,time);
-                if ((Long)time!=null && currtime > time + AppConstants.MINUTE * 90) {
+                Long accountid=merchantDetail.getBusinessAccountId();
+                bookingDao.addbooking(merchantid,"ok",bookingResponse.getOrderDetail().getOrderId(),latitude,longitude,cashbacks,time,accountid);
+                if (true) {
                     Long custid=bookingResponse.getOrderDetail().getCustomerId();
                     DiscoveryPostRequest discoveryPostRequest=new DiscoveryPostRequest(custid.toString(),AppConstants.RADIUS,
                             String.valueOf(AppUtil.currentTime()), String.valueOf(AppUtil.currentTime()),latitude,longitude);
                     MerchantDiscoveryResponse merchantDiscoveryResponse=discoveryService.getDiscoveryDetail(discoveryPostRequest);
                     List<MerchantDiscoveryResponse.Merchant> merchants=merchantDiscoveryResponse.getResult().getMerchant();
                     ArrayList<Long> mids=new ArrayList<>();
-                    for(MerchantDiscoveryResponse.Merchant merchant:merchants){
+                    for(MerchantDiscoveryResponse.Merchant merchant:merchants) {
                         mids.add(merchant.getMerchantId());
                     }
-
-
+                    HashMap<Long,Long> count = bookingDao.getBookingCount(mids);
+                    Long totalbooking=0l;
+                    for (Long value : count.values()) {
+                        logger.info(value+" ");
+                        logger.info("Printed HashMap");
+                        totalbooking += value;
+                    }
+                    for (Long key : count.keySet()) {
+                        logger.info(key+" ");
+                        logger.info("Printed HashMap");
+                    }
+                    logger.info(totalbooking+"");
+                    count.put(63175l,1l);
+                    for (Long key : count.keySet()) {
+                        Long accid = merchantService.getMerchant(key).getBusinessAccountId();
+                        List<Long> users = accountService.getDecisonMaker(accid);
+                        Long resp=notificationService.send(key,users,tempid,20.0,25.0);
+                        if(resp != null){
+                            for(Long user: users){
+                                notificationDao.addNotification(key,user,20.0,30.0,time,tempid);
+                            }
+                        }
+                    }
                 } else {
                     logger.info("PAL reservation UNDER 90mins of booking so not sending any notifications");
                 }
