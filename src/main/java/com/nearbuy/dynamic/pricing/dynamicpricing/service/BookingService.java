@@ -34,6 +34,8 @@ public class BookingService {
     private AppRestClient client;
 
     public BookingResponse getBookingDetails(long id){
+        logger.info(env.toString());
+        logger.info(env.getProperty("merchant.service"));
         String url = BOOKING_SERVICE+id+"?isDetailReq=true";
         logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);

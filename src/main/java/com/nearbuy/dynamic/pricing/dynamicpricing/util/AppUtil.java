@@ -15,6 +15,30 @@ public class AppUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(AppUtil.class);
 
+    public static String IntToStringSlot(int slot) {
+        if(slot==0)
+            return "BRE";
+        else if(slot==1)
+            return "LUN";
+        else if(slot==2)
+            return "EVE";
+        else if(slot==3)
+            return "DIN";
+        else return "ALL";
+    }
+
+    public static int StringToIntSlot(String slot){
+        if(slot.equalsIgnoreCase("BRE"))
+            return 0;
+        else if(slot.equalsIgnoreCase("LUN"))
+            return 1;
+        else if(slot.equalsIgnoreCase("EVE"))
+            return 2;
+        else if(slot.equalsIgnoreCase("DIN"))
+            return 3;
+        else return 4;
+    }
+
     public String getJson(Object object){
         return null;
     }

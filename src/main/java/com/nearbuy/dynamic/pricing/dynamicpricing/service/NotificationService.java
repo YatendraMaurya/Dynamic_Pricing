@@ -61,7 +61,7 @@ public class NotificationService {
     private static final String USERS = "%USERS%";
     private static final String TEMPLATE_ID = "%TEMPLATE_ID%";
 
-    public Long send(Long mid,List<Long> users, int templateId, Double cashback_from, Double cashback_to){
+    public Long send(Long mid,List<Long> users, int templateId, Double cashback_from, Double cashback_to,Long optioinID){
         StringBuilder userArray = new StringBuilder();
         for(Long num : users){
             userArray.append("\"").append(num).append("\"").append(',');
@@ -76,7 +76,7 @@ public class NotificationService {
         if (res.getStatusCode().is2xxSuccessful()) {
             logger.info(AppUtil.getFromJson(res.getBody(), Long.class).toString());
             for(Long user:users){
-                notificationDao.addNotification(mid,user,cashback_from,cashback_to,AppUtil.currentTime(),templateId);
+                notificationDao.addNotification(mid,optioinID,user,cashback_from,cashback_to,AppUtil.currentTime(),templateId);
                 logger.info("Successfully added");
             }
             return AppUtil.getFromJson(res.getBody(), Long.class);

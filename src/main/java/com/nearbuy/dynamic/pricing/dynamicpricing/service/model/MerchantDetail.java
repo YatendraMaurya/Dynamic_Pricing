@@ -3,6 +3,7 @@ package com.nearbuy.dynamic.pricing.dynamicpricing.service.model;
 import java.io.Serializable;
 
 public class MerchantDetail {
+    //Here BusinessAccountid is accountid
     Addres address;
     Long businessAccountId;
 

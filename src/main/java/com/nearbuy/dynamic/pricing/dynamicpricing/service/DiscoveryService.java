@@ -34,11 +34,36 @@ public class DiscoveryService {
     }
 
     private void initRequest(){
-        this.postBody = "{\"offersOnly\":true,\"offset\":0,\"count\":30,\"vertical\":\"LOCAL\"," +
-                "\"categoryIds\":[\"FNB\"],\"sortOrder\":\"SCORE_NEAR_BY\",\"sortPattern\":\"ASC\",\"customerId\":"+this.discoveryPostRequest.getCUSTOMER_ID()+
-                ",\"workflowTypes\":[\"BOOKING_TYPE2\"],\"source\":\"MOBILE\",\"location\":{\"coordinates\":" +
-                "{\"lat\":"+this.discoveryPostRequest.getLAT()+",\"lng\":"+this.discoveryPostRequest.getLNG()+",\"radius\":"+this.discoveryPostRequest.getRADIUS()+"}" +
-                ",\"dates\":{\"startDate\":"+this.discoveryPostRequest.getSTART_DATE()+",\"endDate\":"+this.discoveryPostRequest.getEND_DATE()+"}," +
-                "\"context\":{\"categoryId\":\"FNB\"}}}";
+        this.postBody = "{  \n" +
+                " \"offersOnly\":true,\n" +
+                " \"offset\":0,\n" +
+                " \"count\":50,\n" +
+                " \"vertical\":\"LOCAL\",\n" +
+                " \"categoryIds\":[  \n" +
+                "    \"FNB\"\n" +
+                " ],\n" +
+                " \"sortOrder\":\"SCORE_NEAR_BY\",\n" +
+                " \"sortPattern\":\"ASC\",\n" +
+                " \"customerId\":"+this.discoveryPostRequest.getCUSTOMER_ID()+",\n" +
+                " \"workflowTypes\":[  \n" +
+                "    \"BOOKING_TYPE2\"\n" +
+                " ],\n" +
+                " \"source\":\"MOBILE\",\n" +
+                " \"location\":{  \n" +
+                "    \"coordinates\":{  \n" +
+                "       \"lat\":"+this.discoveryPostRequest.getLAT()+",\n" +
+                "       \"lng\":"+this.discoveryPostRequest.getLNG()+",\n" +
+                "       \"radius\":"+this.discoveryPostRequest.getRADIUS()+"\n" +
+                "    }\n" +
+                "},\n" +
+                "\"dates\":{  \n" +
+                "       \"startDate\":"+this.discoveryPostRequest.getSTART_DATE()+",\n" +
+                "       \"endDate\":"+this.discoveryPostRequest.getEND_DATE()+"\n" +
+                "    },\n" +
+                "    \"context\":{  \n" +
+                "       \"categoryId\":\"FNB\"\n" +
+                "    },\n" +
+                " \"slotId\" : "+this.discoveryPostRequest.getSLOT_ID()+"\n" +
+                "}";
     }
 }

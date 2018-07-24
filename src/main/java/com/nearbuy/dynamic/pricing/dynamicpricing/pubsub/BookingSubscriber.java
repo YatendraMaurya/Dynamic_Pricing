@@ -4,10 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.BookingDao;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.NotificationDao;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.*;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.BookingResponse;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.DiscoveryPostRequest;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.MerchantDetail;
-import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.MerchantDiscoveryResponse;
+import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.*;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppConstants;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppUtil;
 import com.nearbuy.dynamic.pricing.model.Booking;
@@ -16,17 +13,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
 
     public static final Logger logger=LoggerFactory.getLogger(BookingSubscriber.class);
-    public static final int tempid = 260;
+    public static final int templateid = 260;
     public final static String WORKFLOW_TYPE = "BOOKING_TYPE2";
     @Autowired
     BookingService bookingService;
@@ -49,11 +45,18 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
     @Autowired
     NotificationDao notificationDao;
 
+    @Autowired
+    DealService dealService;
+
+    @Autowired
+    InventoryService inventoryService;
+
     public final String DATE_FORMAT = "yyyy-MM-dd";
 
     @Override
     public void consume(Booking.BookingWrraper booking) {
         Booking booking1=booking.getPayloadData();
+        int slot=0;
         if(booking.getMsg().equalsIgnoreCase(BookingDao.ACCEPTED)){
             BookingResponse bookingResponse=bookingService.getBookingDetails(booking1.getOrderId());
             if(!WORKFLOW_TYPE.equals(bookingResponse.getOrderDetail().getOrderLines().get(0).getWorkflowType())){
@@ -74,6 +77,7 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                         cashbacks.add(orderBomBOs.getCashback());
                     }
                 }
+                Double cashb = bookingResponse.getBooking().getOffers()[0].getSlotPrices()[0].getDiscount().getPercent();
                 long currtime= 0;
                 try {
                     currtime = AppUtil.getTimeFromDate(DATE_FORMAT,bookingResponse.getBooking().getOffers()[0].getSlotPrices()[0].getDate())
@@ -82,11 +86,15 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                     e.printStackTrace();
                 }
                 Long accountid=merchantDetail.getBusinessAccountId();
-                bookingDao.addbooking(merchantid,"ok",bookingResponse.getOrderDetail().getOrderId(),latitude,longitude,cashbacks,time,accountid);
+                slot=AppUtil.StringToIntSlot(bookingResponse.getBooking().getOffers()[0].getOfferDealDetail().
+                        getOfferValidity().getValidityTimings()[0].getTags()[0]);
+                Long offerid = bookingResponse.getBooking().getOffers()[0].getOfferId();
+                Long orderid = bookingResponse.getOrderDetail().getOrderId();
+                bookingDao.addbooking(merchantid,"ok",orderid,latitude,longitude,cashb,time,accountid,slot,offerid);
                 if (true) {
                     Long custid=bookingResponse.getOrderDetail().getCustomerId();
                     DiscoveryPostRequest discoveryPostRequest=new DiscoveryPostRequest(custid.toString(),AppConstants.RADIUS,
-                            String.valueOf(AppUtil.currentTime()), String.valueOf(AppUtil.currentTime()),latitude,longitude);
+                            String.valueOf(AppUtil.currentTime()), String.valueOf(AppUtil.currentTime()),latitude,longitude,slot);
                     MerchantDiscoveryResponse merchantDiscoveryResponse=discoveryService.getDiscoveryDetail(discoveryPostRequest);
                     List<MerchantDiscoveryResponse.Merchant> merchants=merchantDiscoveryResponse.getResult().getMerchant();
                     ArrayList<Long> mids=new ArrayList<>();
@@ -107,14 +115,24 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                     logger.info(totalbooking+"");
                     count.put(63175l,1l);
                     for (Long key : count.keySet()) {
+                        List<Long> optionIdforGivenSlot = dealService.getOptionIdforGivenSlot(slot,key);
+                        for(Long optionId : optionIdforGivenSlot){
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date1 = new Date();
+                            String date = dateFormat.format(date1);
+                            InventoryServiceModel inventoryServiceModel = inventoryService.getInventoryDetails(optionId,1,date,date);
+                            Double cashbackFrom = inventoryServiceModel.getInventory()[0].cashback();
+                        if(!notificationDao.hasNotifiedRecently(key,optionId)){
                         Long accid = merchantService.getMerchant(key).getBusinessAccountId();
+
                         List<Long> users = accountService.getDecisonMaker(accid);
-                        Long resp=notificationService.send(key,users,tempid,20.0,25.0);
+
+                        Long resp=notificationService.send(key,users,templateid,cashbackFrom,25.0,optionId);
                         if(resp != null){
                             for(Long user: users){
-                                notificationDao.addNotification(key,user,20.0,30.0,time,tempid);
+                                notificationDao.addNotification(key,optionId,user,cashbackFrom,30.0,time,templateid);
                             }
-                        }
+                        }}}
                     }
                 } else {
                     logger.info("PAL reservation UNDER 90mins of booking so not sending any notifications");

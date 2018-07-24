@@ -1,16 +1,30 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.service.model;
 
 public class DiscoveryPostRequest {
-    private Long CUSTOMER_ID, RADIUS, START_DATE, END_DATE;
+    private Long CUSTOMER_ID;
+    private Long RADIUS;
+    private Long START_DATE;
+    private Long END_DATE;
+
+    public int getSLOT_ID() {
+        return SLOT_ID;
+    }
+
+    public void setSLOT_ID(int SLOT_ID) {
+        this.SLOT_ID = SLOT_ID;
+    }
+
+    private int SLOT_ID;
     private Double LAT, LNG;
 
-    public DiscoveryPostRequest(String CUSTOMER_ID, Long RADIUS, String START_DATE, String END_DATE, Double LAT, Double LNG) {
+    public DiscoveryPostRequest(String CUSTOMER_ID, Long RADIUS, String START_DATE, String END_DATE, Double LAT, Double LNG,int slotid) {
         this.CUSTOMER_ID = Long.valueOf(CUSTOMER_ID);
         this.RADIUS = RADIUS;
         this.START_DATE = Long.valueOf(START_DATE);
         this.END_DATE = Long.valueOf(END_DATE);
         this.LAT = LAT;
         this.LNG = LNG;
+        this.SLOT_ID=slotid;
     }
 
     public Long getCUSTOMER_ID() {

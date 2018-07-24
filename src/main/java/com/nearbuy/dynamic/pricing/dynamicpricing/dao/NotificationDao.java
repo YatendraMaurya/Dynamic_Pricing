@@ -24,16 +24,21 @@ public class NotificationDao {
     public static final String TIMESLOT = "timeSlot";
     public static final String TEMPLATE_ID = "templateId";
     public static final String MERCHANT_ID = "merchantId";
+    public static final String OPTION_ID = "optionId";
 
-    public void addNotification(Long merchid,Long userid, Double cashback_previous, Double cashback_update, Long time,int tempid){
+    public void addNotification(Long merchid,Long optionId,Long userid, Double cashback_previous, Double cashback_update, Long time,int tempid){
         Document doc = new Document(MERCHANT_ID,merchid).append(USER_ID,userid).
                 append(CASH_BACK_FROM,cashback_previous).
                 append(CASH_BACK_TO,cashback_update).
-                append(TIMESLOT,time).append(TEMPLATE_ID,tempid);
+                append(TIMESLOT,time).append(TEMPLATE_ID,tempid).append(OPTION_ID,optionId);
         NotificationCollection.insertOne(doc);
     }
 
     public NotificationMongoModel getNotificationById(Long userId){
         return (NotificationMongoModel) NotificationCollection.find(Filters.eq(USER_ID,userId),NotificationMongoModel.class).first();
+    }
+
+    public boolean hasNotifiedRecently(Long mid,Long optionId) {
+        return NotificationCollection.find(Filters.and(Filters.eq(OPTION_ID,optionId),Filters.eq(MERCHANT_ID,mid))).first() != null;
     }
 }

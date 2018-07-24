@@ -44,10 +44,14 @@ public class BookingDao {
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String ACCOUNT_ID = "businessAccId";
+    public static final String SLOT = "slotId";
+    public static final String OFFER_ID = "offerId";
 
-    public void addbooking(long merchantid, String status, long orderid, Double latitude, Double longitude, ArrayList<Double> cashcback, long time,Long accountid) {
+    public void addbooking(long merchantid, String status, long orderid, Double latitude, Double longitude, Double cashcback,
+                           long time,Long accountid,int slot,Long offerid) {
         Document doc=new Document(MERCHANT_ID,merchantid).append(STATUS,status).append(ORDER_ID,orderid).append(CASH_BACK,cashcback).
-                append(TIMESLOT,time).append(LATITUDE,latitude).append(LONGITUDE,longitude).append(ACCOUNT_ID,accountid);
+                append(TIMESLOT,time).append(LATITUDE,latitude).append(LONGITUDE,longitude).
+                append(ACCOUNT_ID,accountid).append(SLOT,slot).append(OFFER_ID,offerid);
         BookingCollection.insertOne(doc);
         logger.info("Added to MongoDatabase");
     }

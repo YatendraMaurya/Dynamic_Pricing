@@ -51,7 +51,7 @@ public class SubscriberConfig {
     private Properties getProps(){
         Properties props = new Properties();
         props.put("bootstrap.servers", "localhost:9092");
-        props.put("group.id", "dynamicpricing687");
+        props.put("group.id", "dynamicpricing");
         props.put("enable.auto.commit", true);
         props.put("max.poll.records", 5);
         props.put("auto.commit.interval.ms", 1000);
@@ -71,6 +71,7 @@ public class SubscriberConfig {
         topicConsumer.put(AppConstants.UPDATE_EVENT, cashbackUpdateSubscriber);
     }
 
+
     @PostConstruct
     void initkafka()
     {
@@ -88,11 +89,14 @@ public class SubscriberConfig {
 
                     while (flag) {
                         logger.info("*******************");
+                        logger.info(env.toString());
+                        logger.info(env.getProperty("merchant.service"));
                         ConsumerRecords<String,Object> records=_consumer.poll(1000);
                         logger.info("************************");
                         for(ConsumerRecord<String,Object> record:records)
                         {
                             AppSubscriber appSubscriber=topicConsumer.get(record.topic());
+                            logger.info(topicConsumer.get(record.topic())+"");
                             logger.info("offset : {}, key : {}, value : {}, consumer : {}, topic : {}, partition : {}, thread : {}",
                                     record.offset(), record.key(), record.value(), _consumer.getClass().getSimpleName(),
                                     record.topic(), record.partition(), threadNo);

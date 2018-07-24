@@ -15,6 +15,7 @@ public class NotifictionCodec extends AppCodec<NotificationMongoModel>{
         notificationMongoModel.setTIMESLOT(doc.getLong(NotificationDao.TIMESLOT));
         notificationMongoModel.setUSER_ID(doc.getLong(NotificationDao.USER_ID));
         notificationMongoModel.setMerchantid(doc.getLong(NotificationDao.MERCHANT_ID));
+        notificationMongoModel.setOptionid(doc.getLong(NotificationDao.OPTION_ID));
         return notificationMongoModel;
     }
 
@@ -26,6 +27,7 @@ public class NotifictionCodec extends AppCodec<NotificationMongoModel>{
         doc.put(NotificationDao.CASH_BACK_FROM,notification.getCASH_BACK_FROM());
         doc.put(NotificationDao.CASH_BACK_TO,notification.getCASH_BACK_TO());
         doc.put(NotificationDao.MERCHANT_ID,notification.getMerchantid());
+        doc.put(NotificationDao.OPTION_ID,notification.getOptionid());
         return doc;
     }
 }

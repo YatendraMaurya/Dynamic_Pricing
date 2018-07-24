@@ -21,13 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-//import org.bson.codecs.configuration.CodecProvider;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Configuration
 public class MongoConfig {
@@ -77,7 +73,4 @@ public class MongoConfig {
         map.put(ObjectId.class,new ObjectIdCodec());
         return new DocumentCodecProvider(map);
     }
-
-
-
 }

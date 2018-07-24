@@ -7,6 +7,15 @@ public class NotificationMongoModel {
     public  Long TIMESLOT ;
     public  int TEMPLATE_ID;
     public Long merchantid;
+    public Long optionid;
+
+    public Long getOptionid() {
+        return optionid;
+    }
+
+    public void setOptionid(Long optionid) {
+        this.optionid = optionid;
+    }
 
     @Override
     public String toString() {

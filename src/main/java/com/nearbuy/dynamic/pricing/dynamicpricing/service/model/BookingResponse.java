@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BookingResponse {
+    //Here OfferId is OptionId
 
     private OrderDetail orderDetail;
     private Booking booking;
@@ -194,6 +195,15 @@ public class BookingResponse {
         }
 
         SlotPrice[] slotPrices;
+        Long offerId;
+
+        public Long getOfferId() {
+            return offerId;
+        }
+
+        public void setOfferId(Long offerId) {
+            this.offerId = offerId;
+        }
 
         public SlotPrice[] getSlotPrices() {
             return slotPrices;
@@ -216,6 +226,17 @@ public class BookingResponse {
 
     public class OfferDealDetail {
         Merchant[] merchants;
+
+        public OfferValidity getOfferValidity() {
+            return offerValidity;
+        }
+
+        public void setOfferValidity(OfferValidity offerValidity) {
+            this.offerValidity = offerValidity;
+        }
+
+        OfferValidity offerValidity;
+
 
         @Override
         public String toString() {
@@ -255,6 +276,15 @@ public class BookingResponse {
     public class SlotPrice {
         long timeSlot;
         String date;
+        Discount discount;
+
+        public Discount getDiscount() {
+            return discount;
+        }
+
+        public void setDiscount(Discount discount) {
+            this.discount = discount;
+        }
 
         @Override
         public String toString() {
@@ -278,6 +308,42 @@ public class BookingResponse {
 
         public void setTimeSlot(long timeSlot) {
             this.timeSlot = timeSlot;
+        }
+    }
+
+    public class OfferValidity {
+        public ValidityTiming[] getValidityTimings() {
+            return validityTimings;
+        }
+
+        public void setValidityTimings(ValidityTiming[] validityTimings) {
+            this.validityTimings = validityTimings;
+        }
+
+        ValidityTiming[] validityTimings;
+    }
+
+    public class ValidityTiming {
+        String[] tags;
+
+        public String[] getTags() {
+            return tags;
+        }
+
+        public void setTags(String[] tags) {
+            this.tags = tags;
+        }
+    }
+
+    public class Discount {
+        Double percent;
+
+        public Double getPercent() {
+            return percent;
+        }
+
+        public void setPercent(Double percent) {
+            this.percent = percent;
         }
     }
 }

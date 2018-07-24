@@ -11,6 +11,41 @@ public class PalBooking {
     private float longitude;
     private long time;
     private Long businessAccId;
+    private int slot;
+    private Long offerid;
+    private Double cashback;
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
+    }
+
+    public Double getCashback() {
+        return cashback;
+    }
+
+    public void setCashback(Double cashback) {
+        this.cashback = cashback;
+    }
+
+    public Long getOfferid() {
+        return offerid;
+    }
+
+    public void setOfferid(Long offerid) {
+        this.offerid = offerid;
+    }
+
+    public int getslot() {
+        return slot;
+    }
+
+    public void setslot(int slotid) {
+        slot = slotid;
+    }
 
     public Long getBusinessAccId() {
         return businessAccId;
@@ -20,7 +55,6 @@ public class PalBooking {
         this.businessAccId = businessAccId;
     }
 
-    private ArrayList<Double> cahsback;
 
     public long getOrderid() {
         return orderid;
@@ -70,13 +104,7 @@ public class PalBooking {
         this.time = time;
     }
 
-    public ArrayList<Double> getCahsback() {
-        return cahsback;
-    }
 
-    public void setCahsback(ArrayList<Double> cahsback) {
-        this.cahsback = cahsback;
-    }
 
     @Override
     public String toString() {
@@ -88,7 +116,7 @@ public class PalBooking {
                 ", longitude=" + longitude +
                 ", time=" + time +
                 ", businessAccId=" + businessAccId +
-                ", cahsback=" + cahsback +
+                ", cashback=" + cashback +
                 '}';
     }
 }
