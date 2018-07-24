@@ -9,6 +9,6 @@ public class AppConfig {
 
     @Bean
     public AppProperties getProperty(){
-        return null;
+        return new AppProperties();
     }
 }

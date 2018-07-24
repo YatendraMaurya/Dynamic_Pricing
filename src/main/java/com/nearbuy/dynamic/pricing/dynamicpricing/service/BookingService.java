@@ -24,7 +24,7 @@ public class BookingService {
     public BookingResponse getBooking(long id){
         String url = env.getProperty(BOOKING_SERVICE) + "/booking/"+id;
         AppRestResponse resp = client.fireRequest(AppRequestFactory.get(url, BookingResponse.class));
-        return resp.getBody();
+        return null;
     }
 
 
