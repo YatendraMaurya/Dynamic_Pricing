@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--included-->
+    <property name="PROJECT_ID" value="dynamic-pricing-service"/>
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_DIR:-logs}/${PROJECT_ID}.json</File>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"application":"dynamic_pricing"}</customFields>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR:-logs}/${PROJECT_ID}.%d{yyyy-MM-dd}_%i.json</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <appender name="async" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="file" />
+    </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5p %c{0} --##-- %m%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.dozer.config.GlobalSettings" level="error" />
+
+    <logger name="org.jboss.logging" level="info" />
+    <logger name="org.hibernate" level="error" />
+    <logger name="org.springframework" level="warn" />
+    <logger name="org.dozer" level="warn" />
+    <logger name="org.apache" level="warn" />
+
+    <!--<root level="INFO">-->
+    <!--<appender-ref ref="STDOUT" />-->
+    <!--</root>-->
+    <root level="INFO">
+        <appender-ref ref="async" />
+        <appender-ref ref="STDOUT" />
+    </root>
+    <!--/included-->
+</configuration>
