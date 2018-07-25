@@ -32,18 +32,18 @@ public class BookingService {
     @Autowired
     private AppRestClient client;
 
-    public BookingResponse getBookingDetails(long id){
-        String url = env.getProperty("booking.service")+id+"?isDetailReq=true";
+    public BookingResponse getBookingDetails(long id) {
+        String url = env.getProperty("booking.service") + id + "?isDetailReq=true";
         logger.info(url);
-        ResponseEntity<String> resp = client.fireGet(url,null,null);
+        ResponseEntity<String> resp = client.fireGet(url, null, null);
         if (resp.getStatusCode().is2xxSuccessful()) {
             logger.info(AppUtil.getFromJson(resp.getBody(), BookingResponse.class).toString());
             return AppUtil.getFromJson(resp.getBody(), BookingResponse.class);
         } else {
-            logger.error("Error in getting booking Details for bookingId {}",id);
+            logger.error("Error in getting booking Details for bookingId {}", id);
             return null;
         }
-    }
 
+    }
 
 }

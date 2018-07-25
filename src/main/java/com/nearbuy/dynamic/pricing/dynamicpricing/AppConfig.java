@@ -19,12 +19,12 @@ public class AppConfig {
     public AppProperties getProperty() throws IOException {
         String profile = System.getProperty("spring.profiles.active");
         logger.info("picking up profile : {}", profile);
-        if(profile==null){
+        if (profile == null) {
             logger.error("Assuming environment to be test.");
             profile = "LOCAL";
-            isTest=true;
+            isTest = true;
         }
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("env-" +profile+ ".properties");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("env-" + profile + ".properties");
 //        InputStream stream = getClass().getClassLoader().getResourceAsStream("env-" + profile + ".properties");
         AppProperties prop = new AppProperties();
         prop.load(stream);
