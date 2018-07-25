@@ -21,7 +21,7 @@ public class AppConfig {
         logger.info("picking up profile : {}", profile);
         if (profile == null) {
             logger.error("Assuming environment to be test.");
-            profile = "LOCAL";
+            profile = "STAG";
             isTest = true;
         }
         InputStream stream = getClass().getClassLoader().getResourceAsStream("env-" + profile + ".properties");

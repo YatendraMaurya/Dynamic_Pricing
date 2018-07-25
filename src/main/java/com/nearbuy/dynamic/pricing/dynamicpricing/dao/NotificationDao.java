@@ -40,7 +40,10 @@ public class NotificationDao {
     }
 
     public NotificationMongoModel getNotificationById(Long inventoryId){
-        return (NotificationMongoModel) NotificationCollection.find(Filters.eq(INVENTORY_ID,inventoryId),NotificationMongoModel.class).first();
+        if(NotificationCollection.find(Filters.eq(INVENTORY_ID,inventoryId),NotificationMongoModel.class).first() != null) {
+            return (NotificationMongoModel) NotificationCollection.find(Filters.eq(INVENTORY_ID, inventoryId), NotificationMongoModel.class).first();
+        }
+        return null;
     }
 
     public boolean hasNotifiedRecently(Long mid,Long optionId) {

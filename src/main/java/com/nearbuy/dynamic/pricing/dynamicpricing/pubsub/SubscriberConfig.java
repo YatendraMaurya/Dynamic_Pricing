@@ -49,6 +49,7 @@ public class SubscriberConfig {
 
     private Properties getProps(){
         Properties props = new Properties();
+        logger.info(env.getProperty("bootstrap.servers"));
         props.put("bootstrap.servers", env.getProperty("bootstrap.servers"));
         props.put("group.id", env.getProperty("group.id"));
         props.put("enable.auto.commit", env.getProperty("enable.auto.commit"));
@@ -87,9 +88,9 @@ public class SubscriberConfig {
                     _consumer.subscribe(topicConsumer.keySet());
 
                     while (flag) {
-                        logger.info("*******************");
+                        logger.info("Started kafka");
                         ConsumerRecords<String,Object> records=_consumer.poll(1000);
-                        logger.info("************************");
+                        logger.info("Started Listining");
                         for(ConsumerRecord<String,Object> record:records)
                         {
                             AppSubscriber appSubscriber=topicConsumer.get(record.topic());
@@ -100,6 +101,7 @@ public class SubscriberConfig {
                             logger.info(AppUtil.getFromJson(record.value().toString(),appSubscriber.getClazz()).toString());
                             appSubscriber.consume(AppUtil.getFromJson(record.value().toString(), appSubscriber.getClazz()));
                         }
+                        logger.info("doesnt get any records");
                     }
                     _consumer.unsubscribe();
                 }

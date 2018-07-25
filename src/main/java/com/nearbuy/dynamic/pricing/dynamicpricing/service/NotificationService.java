@@ -1,8 +1,6 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.service;
 
-import com.google.gson.reflect.TypeToken;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.NotificationDao;
-import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppConstants;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppProperties;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppRestClient;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppUtil;
@@ -11,11 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class NotificationService {
@@ -45,8 +40,9 @@ public class NotificationService {
             "    \"templateId\": " + TEMPLATE_ID + ",\n" +
             "    \"placeHolderMap\": {\n" +
             "      \"CTA\": \"sdfghj\",\n" +
-            "      \"CASHBACK_FROM\": \"" + CASHBACK_FROM + "\",\n" +
-            "      \"CASHBACK_TO\": \"" + CASHBACK_TO + "\"\n" +
+            "      \"MID\": \"" + MID + "\",\n" +
+            "      \"OID\": \"" + OPTION_ID + "\",\n" +
+            "      \"CB_TO\": \"" + CASHBACK_TO + "\"\n" +
             "    }\n" +
             "  },\n" +
             "  \"userCommunication\": {\n" +
@@ -59,13 +55,16 @@ public class NotificationService {
             "  \"trimPushNotification\": true\n" +
             "}";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static final int CASHBACK_FROM = -1;
+    private static final int MID = -1;
     private static final int CASHBACK_TO = -2;
+    private static final int OPTION_ID = -3;
     private static final String USERS = "%USERS%";
     private static final String TEMPLATE_ID = "%TEMPLATE_ID%";
 
     public Long send(Long mid,List<Long> users, int templateId, Double cashback_from, Double cashback_to,Long optioinID){
         String url = env.getProperty("notification.manager.base");
+        logger.info(String.valueOf(cashback_to));
+        logger.info(url);
         StringBuilder userArray = new StringBuilder();
         for(Long num : users){
             userArray.append("\"").append(num).append("\"").append(',');
@@ -73,12 +72,14 @@ public class NotificationService {
         userArray.deleteCharAt(userArray.length() - 1);
         String userArr = userArray.toString();
         this.postBody = this.postBody.replace(TEMPLATE_ID, String.valueOf(templateId)).
-                replace(String.valueOf(CASHBACK_FROM), String.valueOf(cashback_from)).
+                replace(String.valueOf(MID), String.valueOf(mid)).
+                replace(String.valueOf(OPTION_ID), String.valueOf(optioinID)).
                 replace(String.valueOf(CASHBACK_TO), String.valueOf(cashback_to)).replace(USERS, userArr);
         logger.info(postBody);
         ResponseEntity<String> res=restClient.firePostJson(url,null,postBody);
         if (res.getStatusCode().is2xxSuccessful()) {
             logger.info(AppUtil.getFromJson(res.getBody(), Long.class).toString());
+            logger.info("Successfully sent notification");
             return AppUtil.getFromJson(res.getBody(), Long.class);
         } else {
             logger.error("Cound not Send Notification");

@@ -70,8 +70,12 @@ public class BookingDao {
 
     public void getBookingbyOrderId(String objectid)
     {
+        if(BookingCollection.find(eq("_id", new ObjectId(objectid)),PalBooking.class).first() != null){
         Object palBooking= BookingCollection.find(eq("_id", new ObjectId(objectid)),PalBooking.class).first();
         logger.info(palBooking.toString());
+        }
+        else
+            logger.info("Booking not found");
     }
 
     public HashMap<Long, Long> getBookingCount(ArrayList<Long> merchantIds){

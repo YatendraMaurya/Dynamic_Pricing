@@ -11,3 +11,6 @@ src/main/java/com/.DS_Store
 src/main/java/com/nearbuy/.DS_Store
 src/main/java/com/nearbuy/dynamic/pricing/.DS_Store
 target/
+postpaid.iml
+postpaid.ipr
+postpaid.iws

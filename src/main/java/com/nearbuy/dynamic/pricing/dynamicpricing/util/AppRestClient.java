@@ -52,6 +52,7 @@ public class AppRestClient {
     }
 
     private <T> ResponseEntity<T> fire(String uri,HttpMethod method,HttpEntity entity,Class<T> responseType,Map<String,Object> uriVariables, ResponseExtractor<ResponseEntity<T>> responseExtractor) {
+        long startTime = AppUtil.currentTime();
         ResponseEntity<T> response = null;
         this.restTemplate=new RestTemplate();
         if(responseExtractor != null) {
@@ -68,6 +69,30 @@ public class AppRestClient {
             else
                 response = restTemplate.exchange(uri, method, entity, responseType, uriVariables);
         }
+        Object resBody;
+        if(!response.getStatusCode().is2xxSuccessful()){
+            resBody =response.getBody();
+        }else{
+            resBody = "not logging on prod";
+        }
+        long responseTime = AppUtil.currentTime() - startTime;
+        String headers = (entity == null  || entity.getHeaders() == null ) ? null : entity.getHeaders().toString();
+        String body = (entity == null  || entity.getBody() == null ) ? null : entity.getBody().toString();
+        logger.info("\n " +
+                        "url : {} \n " +
+                        "type : {} \n " +
+                        "uriVariables : {} \n " +
+                        "headers : {} \n " +
+                        "request : {} \n " +
+                        "response : {} \n " +
+                        "status : {} \n " +
+                        "Time Taken : {}"
+                ,uri, method.name(),
+                uriVariables,
+                headers,
+                body,
+                resBody,
+                response.getStatusCode(),responseTime);
         return response;
     }
 

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -70,6 +71,13 @@ public class AppUtil {
 
     public static String toJson(Object o) {
         return new Gson().toJson(o);
+    }
+
+    public static String todayDate(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = new Date();
+        String date = dateFormat.format(date1);
+        return date;
     }
 
 }

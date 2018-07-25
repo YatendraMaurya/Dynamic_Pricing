@@ -25,7 +25,7 @@ public class AccountService {
     private AppRestClient client;
 
     public AccountServiceModel getAccountDetails(Long id){
-        String url= env.getProperty("accountservices")+id;
+        String url= env.getProperty("account.service")+id;
         logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);
         if (resp.getStatusCode().is2xxSuccessful()) {
@@ -42,12 +42,13 @@ public class AccountService {
             AccountServiceModel accountServiceModel = getAccountDetails(id);
             List<AccountServiceModel.AccountUser> userList = accountServiceModel.getRs().getAccountUsers();
             for (AccountServiceModel.AccountUser user : userList) {
+                if(user.getUserDevice().length>0){
                 if (user.getRole().getRoleName().equalsIgnoreCase("Decision Maker")&&
                         user.getUserDevice()[0].getOs().equalsIgnoreCase("app_android")&&
-                        Integer.parseInt(user.getUserDevice()[0].getAppVersion().split("_")[1])>=16) {
+                        Integer.parseInt(user.getUserDevice()[0].getAppVersion().split("_")[1])>=17) {
                     res.add(user.getId());
                 }
-            }
+            }}
         return res;
     }
 }

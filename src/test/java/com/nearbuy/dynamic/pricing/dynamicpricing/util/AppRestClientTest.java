@@ -7,6 +7,7 @@ import com.nearbuy.dynamic.pricing.dynamicpricing.dao.model.NotificationMongoMod
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.*;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.*;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -85,6 +86,7 @@ public class AppRestClientTest {
     @Autowired
     BookingDao bookingDao;
 
+    @Ignore
     @Test
     public void Mongotest(){
         bookingDao.getBookingbyOrderId("5b4f28539cef617d71266ac9");
@@ -101,10 +103,10 @@ public class AppRestClientTest {
 
 
     @Test
-    public void postbodytest(){
+    public void Notificationtest(){
         List<Long> a=new ArrayList<>();
-        a.add(1052571l);
-        notificationService.send(63175l,a,260,20.0,30.0,30000000129137l);
+        a.add(1073599l);
+        notificationService.send(25795L,a,260,20.0,10.0,30000000127902L);
     }
 
     @Autowired
@@ -112,8 +114,11 @@ public class AppRestClientTest {
 
     @Test
     public void NotificationMongo(){
-       // NotificationMongoModel notificationMongo=notificationDao.getNotificationById(1052571l);
-        //logger.info(notificationMongo.toString());
+        NotificationMongoModel notificationMongo=notificationDao.getNotificationById(1052571l);
+        if(notificationMongo != null)
+        logger.info(notificationMongo.toString());
+        else
+            logger.info("notification not found in Mongo");
     }
 
     @Autowired
