@@ -8,6 +8,7 @@ public class DynamicPricingApplication {
 
 	public static void main(String[] args) {
 		//System.setProperty("spring.profiles.default", "STAG");
+//		TEST
 		SpringApplication.run(DynamicPricingApplication.class, args);
 	}
 }
