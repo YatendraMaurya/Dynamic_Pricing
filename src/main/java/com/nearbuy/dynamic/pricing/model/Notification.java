@@ -4,6 +4,15 @@ import java.util.List;
 
 public class Notification {
     Long inventoryId;
+    Long itemKey;
+
+    public Long getItemKey() {
+        return itemKey;
+    }
+
+    public void setItemKey(Long itemKey) {
+        this.itemKey = itemKey;
+    }
 
     @Override
     public String toString() {

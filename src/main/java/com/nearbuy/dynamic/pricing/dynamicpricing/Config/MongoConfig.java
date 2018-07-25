@@ -9,6 +9,7 @@ import com.nearbuy.dynamic.pricing.dynamicpricing.dao.codec.BookingCodec;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.codec.NotifictionCodec;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.model.NotificationMongoModel;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.model.PalBooking;
+import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppProperties;
 import org.bson.BsonBoolean;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -19,6 +20,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;
@@ -27,17 +29,22 @@ import java.util.Map;
 
 @Configuration
 public class MongoConfig {
+
+    @Autowired
+    AppProperties env;
+
     private static final Logger logger=LoggerFactory.getLogger(MongoConfig.class);
     private List<? extends CodecProvider> provider;
-    private final String host="localhost";
-    private final int port=27017;
 
     @Bean
     public MongoDatabase getDb(){
-        String db = "dynamicpricing";
-        String hosts = "localhost";
-        String userName = "";
-        String passwd = "";
+
+        String db = env.getProperty("mongo.db");
+        String[] hosts = env.getProperty("mongo.hosts").split(":");
+        String host = hosts[0];
+        int port = Integer.valueOf(hosts[1]);
+        String userName = env.getProperty("mongo.username");
+        String passwd = env.getProperty("mongo.password");
         MongoClient mongoClient = new MongoClient(host,port);
         CodecRegistry codecRegistry = CodecRegistries.fromProviders(getProvider());
         return mongoClient.getDatabase(db).withCodecRegistry(codecRegistry);
@@ -55,6 +62,7 @@ public class MongoConfig {
     public MongoCollection<Document> getNotificationCollection(){
         MongoCollection<Document> coll =getDb().getCollection("Notification");
         coll.createIndex(new Document(NotificationDao.USER_ID,1));
+        coll.createIndex(new Document(NotificationDao.INVENTORY_ID,1));
         return coll;
     }
 

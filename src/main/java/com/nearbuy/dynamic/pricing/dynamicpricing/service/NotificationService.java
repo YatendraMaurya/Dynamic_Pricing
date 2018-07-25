@@ -3,6 +3,7 @@ package com.nearbuy.dynamic.pricing.dynamicpricing.service;
 import com.google.gson.reflect.TypeToken;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.NotificationDao;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppConstants;
+import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppProperties;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppRestClient;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppUtil;
 import org.slf4j.Logger;
@@ -29,7 +30,9 @@ public class NotificationService {
     @Autowired
     NotificationDao notificationDao;
 
-    private final String url = "http://nbdeliverymanager.nearbuytoolsstag.in/api/v1/communication";
+    @Autowired
+    AppProperties env;
+
 
     private String postBody = "{\n" +
             "  \"communicationName\": \"dynamicCashbackForMerchant\",\n" +
@@ -62,6 +65,7 @@ public class NotificationService {
     private static final String TEMPLATE_ID = "%TEMPLATE_ID%";
 
     public Long send(Long mid,List<Long> users, int templateId, Double cashback_from, Double cashback_to,Long optioinID){
+        String url = env.getProperty("notification.manager.base");
         StringBuilder userArray = new StringBuilder();
         for(Long num : users){
             userArray.append("\"").append(num).append("\"").append(',');
@@ -75,10 +79,6 @@ public class NotificationService {
         ResponseEntity<String> res=restClient.firePostJson(url,null,postBody);
         if (res.getStatusCode().is2xxSuccessful()) {
             logger.info(AppUtil.getFromJson(res.getBody(), Long.class).toString());
-            for(Long user:users){
-                notificationDao.addNotification(mid,optioinID,user,cashback_from,cashback_to,AppUtil.currentTime(),templateId);
-                logger.info("Successfully added");
-            }
             return AppUtil.getFromJson(res.getBody(), Long.class);
         } else {
             logger.error("Cound not Send Notification");

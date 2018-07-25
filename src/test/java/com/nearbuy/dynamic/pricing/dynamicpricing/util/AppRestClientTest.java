@@ -76,9 +76,9 @@ public class AppRestClientTest {
     @Test
     public void MerchantTest() {
         MerchantDetail merchantDetail=merchantService.getMerchant(63175L);
-        logger.info(merchantDetail.getAddress().getLatitude()+" "+merchantDetail.getAddress().getLongitude()+"");
+        logger.info(merchantDetail.getRs().getAddress().getLatitude()+" "+merchantDetail.getRs().getAddress().getLongitude()+"");
         logger.info(map.size()+"");
-        logger.info(merchantDetail.getBusinessAccountId()+"");
+        logger.info(merchantDetail.getRs().getBusinessAccountId()+"");
         //Assert.assertFalse(mids.isEmpty());
     }
 
@@ -112,8 +112,8 @@ public class AppRestClientTest {
 
     @Test
     public void NotificationMongo(){
-        NotificationMongoModel notificationMongo=notificationDao.getNotificationById(1052571l);
-        logger.info(notificationMongo.toString());
+       // NotificationMongoModel notificationMongo=notificationDao.getNotificationById(1052571l);
+        //logger.info(notificationMongo.toString());
     }
 
     @Autowired

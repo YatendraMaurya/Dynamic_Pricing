@@ -93,4 +93,9 @@ public class BookingDao {
         }
         return retval;
     }
+
+    public Boolean update(Long merchantid, Double updtaedCb) {
+        BookingCollection.updateOne(Filters.eq(MERCHANT_ID,merchantid), Updates.set(CASH_BACK,updtaedCb));
+        return true;
+    }
 }

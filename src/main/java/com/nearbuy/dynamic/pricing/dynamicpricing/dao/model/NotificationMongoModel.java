@@ -8,6 +8,24 @@ public class NotificationMongoModel {
     public  int TEMPLATE_ID;
     public Long merchantid;
     public Long optionid;
+    public Long INVENTORY_ID;
+    public Long INVENTORY_KEY;
+
+    public Long getINVENTORY_ID() {
+        return INVENTORY_ID;
+    }
+
+    public void setINVENTORY_ID(Long INVENTORY_ID) {
+        this.INVENTORY_ID = INVENTORY_ID;
+    }
+
+    public Long getINVENTORY_KEY() {
+        return INVENTORY_KEY;
+    }
+
+    public void setINVENTORY_KEY(Long INVENTORY_KEY) {
+        this.INVENTORY_KEY = INVENTORY_KEY;
+    }
 
     public Long getOptionid() {
         return optionid;

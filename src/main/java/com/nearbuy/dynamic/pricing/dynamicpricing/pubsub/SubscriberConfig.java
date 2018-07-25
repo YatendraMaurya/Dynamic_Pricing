@@ -44,21 +44,20 @@ public class SubscriberConfig {
     @Autowired
     private CashbackUpdateSubscriber cashbackUpdateSubscriber;
 
-
-
     @Autowired
     AppProperties env;
+
     private Properties getProps(){
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
-        props.put("group.id", "dynamicpricing");
-        props.put("enable.auto.commit", true);
-        props.put("max.poll.records", 5);
-        props.put("auto.commit.interval.ms", 1000);
-        props.put("session.timeout.ms", 300000);
-        props.put("request.timeout.ms", 300001);
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("bootstrap.servers", env.getProperty("bootstrap.servers"));
+        props.put("group.id", env.getProperty("group.id"));
+        props.put("enable.auto.commit", env.getProperty("enable.auto.commit"));
+        props.put("max.poll.records", env.getProperty("max.poll.records"));
+        props.put("auto.commit.interval.ms", env.getProperty("auto.commit.interval.ms"));
+        props.put("session.timeout.ms", env.getProperty("session.timeout.ms"));
+        props.put("request.timeout.ms", env.getProperty("request.timeout.ms"));
+        props.put("key.deserializer", env.getProperty("key.deserializer"));
+        props.put("value.deserializer", env.getProperty("value.deserializer"));
         return props;
     }
 

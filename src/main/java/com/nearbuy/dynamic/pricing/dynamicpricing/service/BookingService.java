@@ -25,7 +25,6 @@ public class BookingService {
 
 
     private static final Logger logger=LoggerFactory.getLogger(BookingService.class);
-    private static String BOOKING_SERVICE="http://walle.nearbuytoolsstag.in/v2/bookings/order/";
 
     @Autowired
     private AppProperties env;
@@ -34,9 +33,7 @@ public class BookingService {
     private AppRestClient client;
 
     public BookingResponse getBookingDetails(long id){
-        logger.info(env.toString());
-        logger.info(env.getProperty("merchant.service"));
-        String url = BOOKING_SERVICE+id+"?isDetailReq=true";
+        String url = env.getProperty("booking.service")+id+"?isDetailReq=true";
         logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);
         if (resp.getStatusCode().is2xxSuccessful()) {

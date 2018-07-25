@@ -56,7 +56,7 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
     @Override
     public void consume(Booking.BookingWrraper booking) {
         Booking booking1=booking.getPayloadData();
-        int slot=0;
+        int slot;
         if(booking.getMsg().equalsIgnoreCase(BookingDao.ACCEPTED)){
             BookingResponse bookingResponse=bookingService.getBookingDetails(booking1.getOrderId());
             if(!WORKFLOW_TYPE.equals(bookingResponse.getOrderDetail().getOrderLines().get(0).getWorkflowType())){
@@ -64,47 +64,43 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
             }
             else
             {
-                long time=bookingResponse.getBooking().getBookingInitiatedAt();
-                logger.info("Adding the booking in the mongo collection: "+AppUtil.toJson(booking));
+                Long time=bookingResponse.getBooking().getBookingInitiatedAt();
+
                 long merchantid=bookingResponse.getBooking().getOffers()[0].getOfferDealDetail().getMerchants()[0].getMerchantId();
                 logger.info(merchantid+"");
+
                 MerchantDetail merchantDetail=merchantService.getMerchant(merchantid);
-                Double latitude=merchantDetail.getAddress().getLatitude();
-                Double longitude=merchantDetail.getAddress().getLongitude();
-                ArrayList<Double> cashbacks = new ArrayList<>();
-                for(BookingResponse.OrderLine orderLine : bookingResponse.getOrderDetail().getOrderLines()){
-                    for(BookingResponse.OrderBomBOs orderBomBOs : orderLine.getProductBO().getOrderBomBOs()){
-                        cashbacks.add(orderBomBOs.getCashback());
-                    }
-                }
-                Double cashb = bookingResponse.getBooking().getOffers()[0].getSlotPrices()[0].getDiscount().getPercent();
-                long currtime= 0;
-                try {
-                    currtime = AppUtil.getTimeFromDate(DATE_FORMAT,bookingResponse.getBooking().getOffers()[0].getSlotPrices()[0].getDate())
-                            +bookingResponse.getBooking().getOffers()[0].getSlotPrices()[0].getTimeSlot();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                Long accountid=merchantDetail.getBusinessAccountId();
+
+                Double latitude=merchantDetail.getRs().getAddress().getLatitude();
+                Double longitude=merchantDetail.getRs().getAddress().getLongitude();
+                Double cashBack = bookingResponse.getBooking().getOffers()[0].getSlotPrices()[0].getDiscount().getPercent();
+                Long accountid=merchantDetail.getRs().getBusinessAccountId();
                 slot=AppUtil.StringToIntSlot(bookingResponse.getBooking().getOffers()[0].getOfferDealDetail().
                         getOfferValidity().getValidityTimings()[0].getTags()[0]);
                 Long offerid = bookingResponse.getBooking().getOffers()[0].getOfferId();
                 Long orderid = bookingResponse.getOrderDetail().getOrderId();
-                bookingDao.addbooking(merchantid,"ok",orderid,latitude,longitude,cashb,time,accountid,slot,offerid);
-                if (true) {
-                    Long custid=bookingResponse.getOrderDetail().getCustomerId();
-                    DiscoveryPostRequest discoveryPostRequest=new DiscoveryPostRequest(custid.toString(),AppConstants.RADIUS,
+
+                bookingDao.addbooking(merchantid,"ok",orderid,latitude,longitude,cashBack,time,accountid,slot,offerid);
+                logger.info("Adding the booking in the mongo collection: "+AppUtil.toJson(booking));
+
+                Long custid=bookingResponse.getOrderDetail().getCustomerId();
+                DiscoveryPostRequest discoveryPostRequest=new DiscoveryPostRequest(custid.toString(),AppConstants.RADIUS,
                             String.valueOf(AppUtil.currentTime()), String.valueOf(AppUtil.currentTime()),latitude,longitude,slot);
-                    MerchantDiscoveryResponse merchantDiscoveryResponse=discoveryService.getDiscoveryDetail(discoveryPostRequest);
-                    List<MerchantDiscoveryResponse.Merchant> merchants=merchantDiscoveryResponse.getResult().getMerchant();
-                    ArrayList<Long> mids=new ArrayList<>();
-                    for(MerchantDiscoveryResponse.Merchant merchant:merchants) {
+                MerchantDiscoveryResponse merchantDiscoveryResponse=discoveryService.getDiscoveryDetail(discoveryPostRequest);
+                List<MerchantDiscoveryResponse.Merchant> merchants=merchantDiscoveryResponse.getResult().getMerchant();
+                ArrayList<Long> mids=new ArrayList<>();
+                for(MerchantDiscoveryResponse.Merchant merchant:merchants) {
                         mids.add(merchant.getMerchantId());
+                }
+
+                HashMap<Long,Long> count = bookingDao.getBookingCount(mids);
+                Long totalbooking=0l;
+                Long maxBooking = -1l;
+                for (Long value : count.values()) {
+                    logger.info(value+" ");
+                    if(value>maxBooking){
+                        maxBooking=value;
                     }
-                    HashMap<Long,Long> count = bookingDao.getBookingCount(mids);
-                    Long totalbooking=0l;
-                    for (Long value : count.values()) {
-                        logger.info(value+" ");
                         logger.info("Printed HashMap");
                         totalbooking += value;
                     }
@@ -113,30 +109,34 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                         logger.info("Printed HashMap");
                     }
                     logger.info(totalbooking+"");
-                    count.put(63175l,1l);
+                   // count.put(63175l,1l);
                     for (Long key : count.keySet()) {
+                        Long bookingcount = count.get(key);
+                        if(bookingcount<(totalbooking-maxBooking)&&bookingcount<(totalbooking*((50*1.0)%100))){
+                            //Getting OptionId for given slot
                         List<Long> optionIdforGivenSlot = dealService.getOptionIdforGivenSlot(slot,key);
+                        if(optionIdforGivenSlot.size()==0){
+                            return;
+                        }
                         for(Long optionId : optionIdforGivenSlot){
                             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                             Date date1 = new Date();
                             String date = dateFormat.format(date1);
                             InventoryServiceModel inventoryServiceModel = inventoryService.getInventoryDetails(optionId,1,date,date);
                             Double cashbackFrom = inventoryServiceModel.getInventory()[0].cashback();
+                            Long inventoryId = inventoryServiceModel.getInventory()[0].getInventoryId();
+                            Long inventorykey = inventoryServiceModel.getItemKey();
                         if(!notificationDao.hasNotifiedRecently(key,optionId)){
-                        Long accid = merchantService.getMerchant(key).getBusinessAccountId();
-
+                        Long accid = merchantService.getMerchant(key).getRs().getBusinessAccountId();
                         List<Long> users = accountService.getDecisonMaker(accid);
-
+                        if(cashbackFrom<(cashBack*((80*1.0)/100))){
                         Long resp=notificationService.send(key,users,templateid,cashbackFrom,25.0,optionId);
                         if(resp != null){
                             for(Long user: users){
-                                notificationDao.addNotification(key,optionId,user,cashbackFrom,30.0,time,templateid);
+                                notificationDao.addNotification(key,optionId,user,cashbackFrom,30.0,time,templateid,inventoryId,inventorykey);
                             }
-                        }}}
+                        }}}}}
                     }
-                } else {
-                    logger.info("PAL reservation UNDER 90mins of booking so not sending any notifications");
-                }
             }
         }
         else if (bookingDao.CANCELLED.equalsIgnoreCase(booking.getMsg())) {

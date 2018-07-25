@@ -3,6 +3,17 @@ package com.nearbuy.dynamic.pricing.dynamicpricing.service.model;
 import java.io.Serializable;
 
 public class MerchantDetail {
+    Rs rs;
+
+    public Rs getRs() {
+        return rs;
+    }
+
+    public void setRs(Rs rs) {
+        this.rs = rs;
+    }
+
+    public class Rs{
     //Here BusinessAccountid is accountid
     Addres address;
     Long businessAccountId;
@@ -57,5 +68,5 @@ public class MerchantDetail {
 
         Double latitude;
         Double longitude;
-    }
+    }}
 }

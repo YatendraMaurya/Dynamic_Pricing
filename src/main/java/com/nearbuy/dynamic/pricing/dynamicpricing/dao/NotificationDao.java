@@ -3,6 +3,7 @@ package com.nearbuy.dynamic.pricing.dynamicpricing.dao;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.nearbuy.dynamic.pricing.dynamicpricing.dao.model.NotificationMongoModel;
+import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppConstants;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,17 +26,21 @@ public class NotificationDao {
     public static final String TEMPLATE_ID = "templateId";
     public static final String MERCHANT_ID = "merchantId";
     public static final String OPTION_ID = "optionId";
+    public static final String INVENTORY_ID = "inventoryId";
+    public static final String INVENTORY_KEY = "inventoryKey";
 
-    public void addNotification(Long merchid,Long optionId,Long userid, Double cashback_previous, Double cashback_update, Long time,int tempid){
+    public void addNotification(Long merchid,Long optionId,Long userid, Double cashback_previous, Double cashback_update,
+                                Long time,int templateid,Long inventoryId,Long inventorykey){
         Document doc = new Document(MERCHANT_ID,merchid).append(USER_ID,userid).
                 append(CASH_BACK_FROM,cashback_previous).
                 append(CASH_BACK_TO,cashback_update).
-                append(TIMESLOT,time).append(TEMPLATE_ID,tempid).append(OPTION_ID,optionId);
+                append(TIMESLOT,time).append(TEMPLATE_ID,templateid).append(OPTION_ID,optionId).
+                append(INVENTORY_ID,inventoryId).append(INVENTORY_KEY,inventorykey);
         NotificationCollection.insertOne(doc);
     }
 
-    public NotificationMongoModel getNotificationById(Long userId){
-        return (NotificationMongoModel) NotificationCollection.find(Filters.eq(USER_ID,userId),NotificationMongoModel.class).first();
+    public NotificationMongoModel getNotificationById(Long inventoryId){
+        return (NotificationMongoModel) NotificationCollection.find(Filters.eq(INVENTORY_ID,inventoryId),NotificationMongoModel.class).first();
     }
 
     public boolean hasNotifiedRecently(Long mid,Long optionId) {

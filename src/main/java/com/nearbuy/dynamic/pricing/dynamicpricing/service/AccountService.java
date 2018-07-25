@@ -2,6 +2,7 @@ package com.nearbuy.dynamic.pricing.dynamicpricing.service;
 
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.AccountServiceModel;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.BookingResponse;
+import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppProperties;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppRestClient;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppUtil;
 import org.slf4j.Logger;
@@ -16,13 +17,15 @@ import java.util.List;
 @Service
 public class AccountService {
     private static final Logger logger=LoggerFactory.getLogger(AccountService.class);
-    private static String ACCOUNT_SERVICE="http://nb-stag-account-service-elb.stagtools.com/accounts/";
+
+    @Autowired
+    AppProperties env;
 
     @Autowired
     private AppRestClient client;
 
     public AccountServiceModel getAccountDetails(Long id){
-        String url = ACCOUNT_SERVICE+id;
+        String url= env.getProperty("accountservices")+id;
         logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);
         if (resp.getStatusCode().is2xxSuccessful()) {

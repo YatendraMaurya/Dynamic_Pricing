@@ -16,6 +16,8 @@ public class NotifictionCodec extends AppCodec<NotificationMongoModel>{
         notificationMongoModel.setUSER_ID(doc.getLong(NotificationDao.USER_ID));
         notificationMongoModel.setMerchantid(doc.getLong(NotificationDao.MERCHANT_ID));
         notificationMongoModel.setOptionid(doc.getLong(NotificationDao.OPTION_ID));
+        notificationMongoModel.setINVENTORY_ID(doc.getLong(NotificationDao.INVENTORY_ID));
+        notificationMongoModel.setINVENTORY_KEY(doc.getLong(NotificationDao.INVENTORY_KEY));
         return notificationMongoModel;
     }
 
@@ -28,6 +30,9 @@ public class NotifictionCodec extends AppCodec<NotificationMongoModel>{
         doc.put(NotificationDao.CASH_BACK_TO,notification.getCASH_BACK_TO());
         doc.put(NotificationDao.MERCHANT_ID,notification.getMerchantid());
         doc.put(NotificationDao.OPTION_ID,notification.getOptionid());
+        doc.put(NotificationDao.INVENTORY_ID,notification.getINVENTORY_ID());
+        doc.put(NotificationDao.INVENTORY_KEY,notification.getINVENTORY_KEY());
+        doc.put(NotificationDao.TIMESLOT,notification.getTIMESLOT());
         return doc;
     }
 }

@@ -2,6 +2,7 @@ package com.nearbuy.dynamic.pricing.dynamicpricing.service;
 
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.DiscoveryPostRequest;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.MerchantDiscoveryResponse;
+import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppProperties;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppRestClient;
 import com.nearbuy.dynamic.pricing.dynamicpricing.util.AppUtil;
 import org.slf4j.Logger;
@@ -14,14 +15,19 @@ import org.springframework.stereotype.Service;
 public class DiscoveryService {
     DiscoveryPostRequest discoveryPostRequest;
     String postBody;
+
     @Autowired
     AppRestClient restClient;
+
+    @Autowired
+    AppProperties env;
+
     public static final Logger logger=LoggerFactory.getLogger(DiscoveryService.class);
 
     public MerchantDiscoveryResponse getDiscoveryDetail(DiscoveryPostRequest dpr) {
         this.discoveryPostRequest = dpr;
         initRequest();
-        String url="http://unified-discovery.nearbuytoolsstag.in/nile-discovery-V2/merchants/listing";
+        String url=env.getProperty("discovery.base");
         ResponseEntity<String> resp=restClient.firePostJsonWithCaching(url,null,this.postBody);
         if (resp.getStatusCode().is2xxSuccessful()) {
 
