@@ -42,7 +42,9 @@ public class AccountService {
             AccountServiceModel accountServiceModel = getAccountDetails(id);
             List<AccountServiceModel.AccountUser> userList = accountServiceModel.getRs().getAccountUsers();
             for (AccountServiceModel.AccountUser user : userList) {
-                if (user.getRole().getRoleName().equalsIgnoreCase("Decision Maker")) {
+                if (user.getRole().getRoleName().equalsIgnoreCase("Decision Maker")&&
+                        user.getUserDevice()[0].getOs().equalsIgnoreCase("app_android")&&
+                        Integer.parseInt(user.getUserDevice()[0].getAppVersion().split("_")[1])>=16) {
                     res.add(user.getId());
                 }
             }

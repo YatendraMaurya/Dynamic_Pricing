@@ -60,7 +60,6 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongo.driver.version}</version>
         </dependency>
-
 		<!--LOGBACK-->
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
@@ -89,7 +88,9 @@
 			<version>1.7.13</version>
 		</dependency>
 		<!--LOGBACK END-->
-    </dependencies>
+
+
+	</dependencies>
 
 	<build>
 		<plugins>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!--included-->
-    <property name="PROJECT_ID" value="dynamic-pricing"/>
+    <property name="PROJECT_ID" value="dynamic-pricing-service"/>
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${LOG_DIR:-logs}/${PROJECT_ID}.json</File>
 
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"application":"dynamicpricing"}</customFields>
+            <customFields>{"application":"dynamic_pricing"}</customFields>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR:-logs}/${PROJECT_ID}.%d{yyyy-MM-dd}_%i.json</fileNamePattern>

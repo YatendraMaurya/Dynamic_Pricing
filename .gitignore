@@ -1,7 +1,7 @@
 .DS_Store
 .idea/
-dynamic-pricing.iml
-dynamic-pricing.ipr
+dynamic-postoaid-pricing.iml
+dynamic-postpaid-pricing.ipr
 dynamic-pricing.iws
 logs/
 src/.DS_Store

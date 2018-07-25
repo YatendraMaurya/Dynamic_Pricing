@@ -88,8 +88,6 @@ public class SubscriberConfig {
 
                     while (flag) {
                         logger.info("*******************");
-                        logger.info(env.toString());
-                        logger.info(env.getProperty("merchant.service"));
                         ConsumerRecords<String,Object> records=_consumer.poll(1000);
                         logger.info("************************");
                         for(ConsumerRecord<String,Object> record:records)
@@ -99,9 +97,8 @@ public class SubscriberConfig {
                             logger.info("offset : {}, key : {}, value : {}, consumer : {}, topic : {}, partition : {}, thread : {}",
                                     record.offset(), record.key(), record.value(), _consumer.getClass().getSimpleName(),
                                     record.topic(), record.partition(), threadNo);
-                            appSubscriber.consume(AppUtil.getFromJson(record.value().toString(), appSubscriber.getClazz()));
-                            logger.info("************************");
                             logger.info(AppUtil.getFromJson(record.value().toString(),appSubscriber.getClazz()).toString());
+                            appSubscriber.consume(AppUtil.getFromJson(record.value().toString(), appSubscriber.getClazz()));
                         }
                     }
                     _consumer.unsubscribe();

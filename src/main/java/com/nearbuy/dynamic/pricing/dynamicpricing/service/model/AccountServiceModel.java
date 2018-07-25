@@ -21,6 +21,15 @@ public class AccountServiceModel {
     }
 
     public class AccountUser {
+        UserDevice[] userDevices;
+
+        public UserDevice[] getUserDevice() {
+            return userDevices;
+        }
+
+        public void setUserDevice(UserDevice[] userDevice) {
+            this.userDevices = userDevice;
+        }
 
         public Role getRole() {
             return role;
@@ -86,6 +95,27 @@ public class AccountServiceModel {
             return "Rs{" +
                     "accountUsers=" + accountUsers +
                     '}';
+        }
+    }
+
+    public class UserDevice {
+        String os;
+        String appVersion;
+
+        public String getOs() {
+            return os;
+        }
+
+        public void setOs(String os) {
+            this.os = os;
+        }
+
+        public String getAppVersion() {
+            return appVersion;
+        }
+
+        public void setAppVersion(String appVersion) {
+            this.appVersion = appVersion;
         }
     }
 }
