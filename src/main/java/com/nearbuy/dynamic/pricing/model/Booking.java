@@ -1,10 +1,25 @@
 package com.nearbuy.dynamic.pricing.model;
 
 public class Booking {
+    Long bookingId;
+    String status;
     Long orderId;
-    Long customerId;
-    long eventOccuredAt;
-    long orderInitiatedAt;
+
+    public Long getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(Long bookingId) {
+        this.bookingId = bookingId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public Long getOrderId() {
         return orderId;
@@ -14,41 +29,8 @@ public class Booking {
         this.orderId = orderId;
     }
 
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public long getEventOccuredAt() {
-        return eventOccuredAt;
-    }
-
-    public void setEventOccuredAt(long eventOccuredAt) {
-        this.eventOccuredAt = eventOccuredAt;
-    }
-
-    public long getOrderInitiatedAt() {
-        return orderInitiatedAt;
-    }
-
-    public void setOrderInitiatedAt(long orderInitatedAt) {
-        this.orderInitiatedAt = orderInitatedAt;
-    }
-
     public class BookingWrraper {
         Booking payloadData;
-        String msg;
-
-        public String getMsg() {
-            return msg;
-        }
-
-        public void setMsg(String msg) {
-            this.msg = msg;
-        }
 
         public Booking getPayloadData() {
             return payloadData;

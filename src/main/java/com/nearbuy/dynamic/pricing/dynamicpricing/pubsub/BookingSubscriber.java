@@ -63,7 +63,7 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
 
         Booking booking1 = booking.getPayloadData();
         int slot;
-        if (booking.getMsg().equalsIgnoreCase(BookingDao.ACCEPTED)) {
+        if (booking1.getStatus().equalsIgnoreCase(BookingDao.ACCEPTED)) {
             logger.info("getting booking details from orderId = " + booking1.getOrderId());
             BookingResponse bookingResponse = bookingService.getBookingDetails(booking1.getOrderId());
             if (!WORKFLOW_TYPE.equals(bookingResponse.getOrderDetail().getOrderLines().get(0).getWorkflowType())) {
@@ -153,7 +153,7 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                     }
                 }
             }
-        } else if (bookingDao.CANCELLED.equalsIgnoreCase(booking.getMsg())) {
+        } else if (bookingDao.CANCELLED.equalsIgnoreCase(booking1.getStatus())) {
             //delete the booking trigger if any and update the collection to
             bookingDao.cancelBooking(booking1.getOrderId());
             logger.info("updated the palBooking for " + AppUtil.toJson(booking1));
