@@ -25,6 +25,7 @@ public class AccountService {
     private AppRestClient client;
 
     public AccountServiceModel getAccountDetails(Long id){
+        logger.info("getAccountDetails: entering with id : {}", id);
         String url= env.getProperty("account.service")+id;
         logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);
