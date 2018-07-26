@@ -1,5 +1,6 @@
 package com.nearbuy.dynamic.pricing.dynamicpricing.service.model;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class AccountServiceModel {
@@ -43,7 +44,8 @@ public class AccountServiceModel {
         @Override
         public String toString() {
             return "AccountUser{" +
-                    "id=" + id +
+                    "userDevices=" + Arrays.toString(userDevices) +
+                    ", id=" + id +
                     ", role=" + role +
                     '}';
         }
@@ -101,6 +103,14 @@ public class AccountServiceModel {
     public class UserDevice {
         String os;
         String appVersion;
+
+        @Override
+        public String toString() {
+            return "UserDevice{" +
+                    "os='" + os + '\'' +
+                    ", appVersion='" + appVersion + '\'' +
+                    '}';
+        }
 
         public String getOs() {
             return os;

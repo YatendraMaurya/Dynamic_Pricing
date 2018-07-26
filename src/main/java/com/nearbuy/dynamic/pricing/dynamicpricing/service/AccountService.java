@@ -12,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -30,7 +33,7 @@ public class AccountService {
         logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);
         if (resp.getStatusCode().is2xxSuccessful()) {
-            logger.info(AppUtil.getFromJson(resp.getBody(), AccountServiceModel.class).toString());
+           // logger.info(AppUtil.getFromJson(resp.getBody(), AccountServiceModel.class).toString());
             return AppUtil.getFromJson(resp.getBody(), AccountServiceModel.class);
         } else {
             logger.error("Error in getting booking Details for bookingId {}",id);
@@ -38,18 +41,40 @@ public class AccountService {
         }
     }
 
-    public List<Long> getDecisonMaker(Long id) {
+    public List<Long> getDecisonMakerT(Long id) {
         List<Long> res = new ArrayList<>();
             AccountServiceModel accountServiceModel = getAccountDetails(id);
             List<AccountServiceModel.AccountUser> userList = accountServiceModel.getRs().getAccountUsers();
+            logger.info(userList.toString());
             for (AccountServiceModel.AccountUser user : userList) {
                 if(user.getUserDevice().length>0){
-                if (user.getRole().getRoleName().equalsIgnoreCase("Decision Maker")&&
-                        user.getUserDevice()[0].getOs().equalsIgnoreCase("app_android")&&
-                        Integer.parseInt(user.getUserDevice()[0].getAppVersion().split("_")[1])>=17) {
-                    res.add(user.getId());
-                }
+                    for(AccountServiceModel.UserDevice userDevice : user.getUserDevice()){
+                        //logger.info(user.getRole().getRoleName());
+                       // logger.info("User appversion " +Integer.parseInt(userDevice.getAppVersion().split("_")[1])
+                       // + " Useros  " + userDevice.getOs());
+                        if (user.getRole().getRoleName().equalsIgnoreCase("Decision Maker")&
+                            userDevice.getOs().equalsIgnoreCase("app_android")&
+                            Integer.parseInt(userDevice.getAppVersion().split("_")[1])>=17) {
+                                res.add(user.getId());
+                        }
+                    }
             }}
+            logger.info(res.toString());
         return res;
     }
+    private boolean isAdminOrPalManager(AccountServiceModel.AccountUser accountUser) {
+        return "Decision Maker".equalsIgnoreCase(accountUser.getRole().getRoleName()) || "PAL Manager".equalsIgnoreCase(accountUser.getRole().getRoleName());
+    }
+
+    private boolean isCBIncreaseNotificationSupported(AccountServiceModel.UserDevice userDevice) {
+        return Integer.parseInt(userDevice.getAppVersion().split("_")[1])>=17 && "app_android".equalsIgnoreCase(userDevice.getOs());
+    }
+
+    public List<Long> getDecisonMaker(Long id) {
+        return getAccountDetails(id).getRs().getAccountUsers().stream().filter(accountUser -> isAdminOrPalManager(accountUser))
+                .filter(accountUser -> Arrays.stream(accountUser.getUserDevice()).filter(userDevice -> isCBIncreaseNotificationSupported(userDevice)).count()>0)
+                .map(AccountServiceModel.AccountUser::getId).collect(Collectors.toList());
+    }
+
+
 }

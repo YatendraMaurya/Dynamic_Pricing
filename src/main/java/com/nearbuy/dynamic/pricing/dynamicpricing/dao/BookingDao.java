@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -32,10 +33,11 @@ public class BookingDao {
 
     @Autowired
     @Qualifier(value = "Dynamic_Collection")
-    MongoCollection BookingCollection;
+    MongoCollection<Document> bookingCollection;
 
     public static final String MERCHANT_ID = "merchantId";
     public static final String STATUS = "status";
+
     public static final String CASH_BACK = "cashback";
     public static final String ORDER_ID = "orderId";
     public static final String TIMESLOT = "timeSlot";
@@ -52,54 +54,53 @@ public class BookingDao {
         Document doc=new Document(MERCHANT_ID,merchantid).append(STATUS,status).append(ORDER_ID,orderid).append(CASH_BACK,cashcback).
                 append(TIMESLOT,time).append(LATITUDE,latitude).append(LONGITUDE,longitude).
                 append(ACCOUNT_ID,accountid).append(SLOT,slot).append(OFFER_ID,offerid);
-        BookingCollection.insertOne(doc);
+        bookingCollection.insertOne(doc);
         logger.info("Added to MongoDatabase");
     }
+
+    public void addBooking(PalBooking booking){
+        bookingCollection.withDocumentClass(PalBooking.class).insertOne(booking);
+    }
+
     public void cancelBooking(long orderid) {
-        BookingCollection.updateOne(Filters.eq(ORDER_ID,orderid), Updates.set(STATUS,CANCELLED));
+        bookingCollection.updateOne(Filters.eq(ORDER_ID,orderid), Updates.set(STATUS,CANCELLED));
     }
     public boolean ispalBooking(long orderid){
-        return BookingCollection.find(Filters.eq(ORDER_ID,orderid)).first()!=null;
+        return bookingCollection.find(Filters.eq(ORDER_ID,orderid)).first()!=null;
     }
 
     public String getBookingStatus(long orderid){
-        return ((PalBooking) BookingCollection.withDocumentClass(PalBooking.class).find(Filters.eq(ORDER_ID,orderid)).first()).getStatus();
+        return ((PalBooking) bookingCollection.withDocumentClass(PalBooking.class).find(Filters.eq(ORDER_ID,orderid)).first()).getStatus();
     }
 
-    private Collection<Booking> bookingCollection;
+   // private Collection<Booking> bookingCollection;
 
     public void getBookingbyOrderId(String objectid)
     {
-        if(BookingCollection.find(eq("_id", new ObjectId(objectid)),PalBooking.class).first() != null){
-        Object palBooking= BookingCollection.find(eq("_id", new ObjectId(objectid)),PalBooking.class).first();
+        if(bookingCollection.find(eq("_id", new ObjectId(objectid)),PalBooking.class).first() != null){
+        Object palBooking= bookingCollection.find(eq("_id", new ObjectId(objectid)),PalBooking.class).first();
         logger.info(palBooking.toString());
         }
         else
             logger.info("Booking not found");
     }
 
-    public HashMap<Long, Long> getBookingCount(ArrayList<Long> merchantIds){
+    public HashMap<Long, Long> getBookingCount(List<Long> merchantIds){
         logger.info(merchantIds.toString());
         HashMap<Long, Long> retval = new HashMap<>();
-        for(Long merchantId : merchantIds){
-            if(BookingCollection.find(Filters.and(Filters.eq(MERCHANT_ID, merchantId) ,
-                    Filters.gte(TIMESLOT, AppUtil.currentTime() - AppConstants.MINUTE))).first() != null){
-                if(!retval.containsKey(merchantId)){
-                    logger.info("IN BOOKING COUNT IF");
-                    logger.info(merchantId+"");
-                    retval.put(merchantId, 1l);
-                } else {
-                    logger.info("IN BOOKING COUNT");
-                    logger.info(merchantId+"");
-                    retval.put(merchantId, retval.get(merchantId)+1);
-                }
+        List<PalBooking> bookings = bookingCollection.withDocumentClass(PalBooking.class).find(Filters.in(MERCHANT_ID, merchantIds)).into(new ArrayList<>());
+        for(PalBooking booking : bookings){
+            if(!retval.containsKey(booking.getMerchantid())){
+                retval.put(booking.getMerchantid(), 1l);
+            } else {
+                retval.put(booking.getMerchantid(), retval.get(booking.getMerchantid())+1);
             }
         }
         return retval;
     }
 
     public Boolean update(Long merchantid, Double updtaedCb) {
-        BookingCollection.updateOne(Filters.eq(MERCHANT_ID,merchantid), Updates.set(CASH_BACK,updtaedCb));
+        bookingCollection.updateOne(Filters.eq(MERCHANT_ID,merchantid), Updates.set(CASH_BACK,updtaedCb));
         return true;
     }
 }

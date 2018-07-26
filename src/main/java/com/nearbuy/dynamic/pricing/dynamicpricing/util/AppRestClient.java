@@ -71,11 +71,11 @@ public class AppRestClient {
                 response = restTemplate.exchange(uri, method, entity, responseType, uriVariables);
         }
         Object resBody;
-        if(!response.getStatusCode().is2xxSuccessful()){
+//        if(!response.getStatusCode().is2xxSuccessful()){
             resBody =response.getBody();
-        }else{
-            resBody = "not logging on STAG";
-        }
+//        }else{
+//            resBody = "not logging on STAG";
+//        }
         long responseTime = AppUtil.currentTime() - startTime;
         String headers = (entity == null  || entity.getHeaders() == null ) ? null : entity.getHeaders().toString();
         String body = (entity == null  || entity.getBody() == null ) ? null : entity.getBody().toString();

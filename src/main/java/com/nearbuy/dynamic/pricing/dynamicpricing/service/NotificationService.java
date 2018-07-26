@@ -63,11 +63,14 @@ public class NotificationService {
 
     public Long send(Long mid,List<Long> users, int templateId, Double cashback_from, Double cashback_to,Long optioinID){
         String url = env.getProperty("notification.manager.base") + "/api/v1/communication";
+        logger.info("Notification will be send to " + users.toString());
         StringBuilder userArray = new StringBuilder();
         for(Long num : users){
             userArray.append("\"").append(num).append("\"").append(',');
         }
-        userArray.deleteCharAt(userArray.length() - 1);
+        if(users.size()>0)
+             userArray.deleteCharAt(userArray.length() - 1);
+
         String userArr = userArray.toString();
         this.postBody = this.postBody.replace(TEMPLATE_ID, String.valueOf(templateId)).
                 replace(String.valueOf(MID), String.valueOf(mid)).

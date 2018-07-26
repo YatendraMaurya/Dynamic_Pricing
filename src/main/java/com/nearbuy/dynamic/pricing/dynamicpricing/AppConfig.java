@@ -23,10 +23,11 @@ public class AppConfig {
     @Bean
     public AppProperties getProperty() throws IOException {
         String profile = System.getProperty("spring.profiles.active");
+        String tempProfile = "SATG";
         logger.info("picking up profile : {}", profile);
         if (profile == null) {
-            logger.error("Assuming environment to be test.");
-            profile = "LOCAL";
+            logger.error("Assuming environment to be {}",tempProfile);
+            profile = "STAG";
             isTest = true;
         }
         InputStream stream = getClass().getClassLoader().getResourceAsStream("env-" + profile + ".properties");

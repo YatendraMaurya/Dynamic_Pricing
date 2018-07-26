@@ -86,8 +86,9 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                 Long orderid = bookingResponse.getOrderDetail().getOrderId();
                 logger.info("Slot for booking is" + slot);
 
+                logger.info("Adding the booking in the mongo collection: " + AppUtil.toJson(booking1));
                 bookingDao.addbooking(merchantid, "ok", orderid, latitude, longitude, cashBack, time, accountid, slot, offerid);
-                logger.info("Adding the booking in the mongo collection: " + AppUtil.toJson(booking));
+
 
                 Long custid = bookingResponse.getOrderDetail().getCustomerId();
 
@@ -114,7 +115,7 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                     }
                     totalbooking += value;
                 }
-                logger.info(totalbooking + "");
+                logger.info("Total bookings are :" + totalbooking);
 
                 Double goodCashback = cashBack;
                 List < Long > optionIdforGivenSlot1 = dealService.getOptionIdforGivenSlot(slot, maxBookingId);
@@ -124,13 +125,17 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                         goodCashback = inventoryServiceModel.getInventory()[0].cashback();
                 }
 
-                    for (Long key: count.keySet()) {
-                        Long bookingcount = count.get(key);
-                        if ((maxBooking - bookingcount) > thresholddif && ((maxBooking * 1.0) / (bookingcount * 1.0)) > thresholdper) {
+                Long bookingcount;
+                    for (Long key: mids) {
+                        if(count.containsKey(key))
+                         bookingcount = count.get(key);
+                        else
+                            bookingcount = 0l;
+                        if ((maxBooking - bookingcount) > thresholddif && ((bookingcount * 1.0) / (maxBooking * 1.0)) < thresholdper) {
                             logger.info("Getting OptionId for given slot and merchantId");
                             List < Long > optionIdforGivenSlot = dealService.getOptionIdforGivenSlot(slot, key);
                             if (optionIdforGivenSlot.size() == 0) {
-                                return;
+                                continue;
                             }
                             Double suggestedCb = goodCashback * ((thresholdCbPer * 1.0) / 100);
                             for (Long optionId: optionIdforGivenSlot) {
@@ -143,7 +148,8 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                                     if (!notificationDao.hasNotifiedRecently(key, optionId)) {
                                         Long accid = merchantService.getMerchant(key).getRs().getBusinessAccountId();
                                         List < Long > users = accountService.getDecisonMaker(accid);
-                                        if (cashbackFrom < suggestedCb) {
+                                        logger.info("Descion makers are :" + users.toString());
+                                        if (cashbackFrom < suggestedCb && !users.isEmpty()) {
                                             Long resp = notificationService.send(key, users, templateid, cashbackFrom, suggestedCb, optionId);
                                             if (resp != null) {
                                                 for (Long user: users) {
