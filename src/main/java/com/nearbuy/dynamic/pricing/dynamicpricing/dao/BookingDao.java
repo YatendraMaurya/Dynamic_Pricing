@@ -39,7 +39,7 @@ public class BookingDao {
     public static final String CASH_BACK = "cashback";
     public static final String ORDER_ID = "orderId";
     public static final String TIMESLOT = "timeSlot";
-    public static final String ACCEPTED = "SUCCESSFUL_PURCHASE";
+    public static final String ACCEPTED = "ACCEPTED";
     public static final String CANCELLED = "CANCELLED";
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
