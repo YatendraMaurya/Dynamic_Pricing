@@ -34,7 +34,7 @@ public class BookingService {
 
     public BookingResponse getBookingDetails(long id) {
         String url = env.getProperty("booking.service") + id + "?isDetailReq=true";
-        logger.info(url);
+       // logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url, null, null);
         if (resp.getStatusCode().is2xxSuccessful()) {
             logger.info(AppUtil.getFromJson(resp.getBody(), BookingResponse.class).toString());

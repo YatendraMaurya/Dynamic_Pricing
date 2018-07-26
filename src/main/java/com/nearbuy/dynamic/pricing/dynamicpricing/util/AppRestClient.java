@@ -73,7 +73,7 @@ public class AppRestClient {
         if(!response.getStatusCode().is2xxSuccessful()){
             resBody =response.getBody();
         }else{
-            resBody = "not logging on prod";
+            resBody = "not logging on STAG";
         }
         long responseTime = AppUtil.currentTime() - startTime;
         String headers = (entity == null  || entity.getHeaders() == null ) ? null : entity.getHeaders().toString();
