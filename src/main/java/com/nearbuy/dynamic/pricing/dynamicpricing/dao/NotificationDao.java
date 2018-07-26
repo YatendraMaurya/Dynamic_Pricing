@@ -46,7 +46,7 @@ public class NotificationDao {
         return null;
     }
 
-    public boolean hasNotifiedRecently(Long mid,Long optionId) {
-        return NotificationCollection.find(Filters.and(Filters.eq(OPTION_ID,optionId),Filters.eq(MERCHANT_ID,mid))).first() != null;
+    public boolean hasNotifiedRecently(Long userId) {
+        return NotificationCollection.find((Filters.eq(USER_ID,userId))).first() != null;
     }
 }

@@ -76,7 +76,7 @@ public class AppRestClientTest {
 
     @Test
     public void MerchantTest() {
-        MerchantDetail merchantDetail=merchantService.getMerchant(63175L);
+        MerchantDetail merchantDetail=merchantService.getMerchant(199789L);
         logger.info(merchantDetail.getRs().getAddress().getLatitude()+" "+merchantDetail.getRs().getAddress().getLongitude()+"");
         logger.info(map.size()+"");
         logger.info(merchantDetail.getRs().getBusinessAccountId()+"");

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
@@ -145,12 +146,13 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                                     Double cashbackFrom = inventoryServiceModel.getInventory()[0].cashback();
                                     Long inventoryId = inventoryServiceModel.getInventory()[0].getInventoryId();
                                     Long inventorykey = inventoryServiceModel.getItemKey();
-                                    if (!notificationDao.hasNotifiedRecently(key, optionId)) {
-                                        Long accid = merchantService.getMerchant(key).getRs().getBusinessAccountId();
-                                        List < Long > users = accountService.getDecisonMaker(accid);
-                                        logger.info("Descion makers are :" + users.toString());
-                                        if (cashbackFrom < suggestedCb && !users.isEmpty()) {
-                                            Long resp = notificationService.send(key, users, templateid, cashbackFrom, suggestedCb, optionId);
+                                    Long accid = merchantService.getMerchant(key).getRs().getBusinessAccountId();
+                                    List < Long > users = accountService.getDecisonMaker(accid);
+//                                    users.iterator()
+                                    users = users.stream().filter(user -> !notificationDao.hasNotifiedRecently(user)).collect(Collectors.toList());
+                                    logger.info("Descion makers are :" + users.toString());
+                                    if (cashbackFrom < suggestedCb && !users.isEmpty()) {
+                                        Long resp = notificationService.send(key, users, templateid, cashbackFrom, suggestedCb, optionId);
                                             if (resp != null) {
                                                 for (Long user: users) {
                                                     logger.info("adding sent notification to Mongo");
@@ -158,7 +160,6 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
                                             }
                                         }
                                     }
-                                }
                             }}
                         }
                     }

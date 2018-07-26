@@ -85,22 +85,21 @@ public class SubscriberConfig {
                     KafkaConsumer<String,Object> _consumer=new KafkaConsumer<String, Object>(getProps());
                     consumers.add(_consumer);
                     _consumer.subscribe(topicConsumer.keySet());
-
                     while (flag) {
-                       // logger.info("Started kafka");
                         ConsumerRecords<String,Object> records=_consumer.poll(1000);
-                       // logger.info("Started Listining");
-                        for(ConsumerRecord<String,Object> record:records)
-                        {
-                            AppSubscriber appSubscriber=topicConsumer.get(record.topic());
-                            logger.info(topicConsumer.get(record.topic())+"");
-                            logger.info("offset : {}, key : {}, value : {}, consumer : {}, topic : {}, partition : {}, thread : {}",
-                                    record.offset(), record.key(), record.value(), _consumer.getClass().getSimpleName(),
-                                    record.topic(), record.partition(), threadNo);
-                            logger.info(AppUtil.getFromJson(record.value().toString(),appSubscriber.getClazz()).toString());
-                            appSubscriber.consume(AppUtil.getFromJson(record.value().toString(), appSubscriber.getClazz()));
+                        for(ConsumerRecord<String,Object> record:records) {
+                            try {
+                                AppSubscriber appSubscriber = topicConsumer.get(record.topic());
+                                logger.info(topicConsumer.get(record.topic()) + "");
+                                logger.info("offset : {}, key : {}, value : {}, consumer : {}, topic : {}, partition : {}, thread : {}",
+                                        record.offset(), record.key(), record.value(), _consumer.getClass().getSimpleName(),
+                                        record.topic(), record.partition(), threadNo);
+                                logger.info(AppUtil.getFromJson(record.value().toString(), appSubscriber.getClazz()).toString());
+                                appSubscriber.consume(AppUtil.getFromJson(record.value().toString(), appSubscriber.getClazz()));
+                            }catch(Exception e){
+                                logger.error(e.getMessage(), e);
+                            }
                         }
-//                        logger.info("doesnt get any records");
                     }
                     _consumer.unsubscribe();
                 }
