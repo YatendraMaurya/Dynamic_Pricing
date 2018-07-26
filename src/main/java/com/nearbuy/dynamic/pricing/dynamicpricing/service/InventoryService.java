@@ -20,8 +20,8 @@ public class InventoryService {
     private AppRestClient client;
 
     public InventoryServiceModel getInventoryDetails(long itemid,int itemType,String fromDate,String toDate){
-        String url = env.getProperty("inventory.base")+"?itemId="+itemid+"&itemType="+itemType+"&fromDate="+fromDate+"&toDate="+toDate+"&isActive=true&inventoryTypeId=1";
-       // logger.info(url);
+        String url = env.getProperty("inventory.base")+ "/v1/inventory"+"?itemId="+itemid+"&itemType="+itemType+"&fromDate="+fromDate+"&toDate="+toDate+"&isActive=true&inventoryTypeId=1";
+        logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);
         if (resp.getStatusCode().is2xxSuccessful()) {
             logger.info(AppUtil.getFromJson(resp.getBody(), InventoryServiceModel.class).toString());

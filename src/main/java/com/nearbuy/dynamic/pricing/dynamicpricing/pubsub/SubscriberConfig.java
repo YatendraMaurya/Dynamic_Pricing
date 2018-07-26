@@ -88,9 +88,9 @@ public class SubscriberConfig {
                     _consumer.subscribe(topicConsumer.keySet());
 
                     while (flag) {
-                        logger.info("Started kafka");
+//                        logger.info("Started kafka");
                         ConsumerRecords<String,Object> records=_consumer.poll(1000);
-                        logger.info("Started Listining");
+//                        logger.info("Started Listining");
                         for(ConsumerRecord<String,Object> record:records)
                         {
                             AppSubscriber appSubscriber=topicConsumer.get(record.topic());
@@ -101,7 +101,7 @@ public class SubscriberConfig {
                             logger.info(AppUtil.getFromJson(record.value().toString(),appSubscriber.getClazz()).toString());
                             appSubscriber.consume(AppUtil.getFromJson(record.value().toString(), appSubscriber.getClazz()));
                         }
-                        logger.info("doesnt get any records");
+//                        logger.info("doesnt get any records");
                     }
                     _consumer.unsubscribe();
                 }

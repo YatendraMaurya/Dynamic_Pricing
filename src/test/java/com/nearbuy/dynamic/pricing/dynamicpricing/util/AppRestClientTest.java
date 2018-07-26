@@ -106,7 +106,8 @@ public class AppRestClientTest {
     public void Notificationtest(){
         List<Long> a=new ArrayList<>();
         a.add(1073599l);
-        notificationService.send(25795L,a,260,20.0,10.0,30000000127902L);
+        Long resp = notificationService.send(25795L, a, 260, 20.0, 10.0, 30000000127902L);
+        Assert.assertNotNull(resp);
     }
 
     @Autowired
@@ -140,6 +141,7 @@ public class AppRestClientTest {
         String dateString = dateFormat.format(date);
         InventoryServiceModel inventoryServiceModel = inventoryService.getInventoryDetails(30000000129137l,1,dateString,dateString);
         logger.info(inventoryServiceModel.toString());
+        if(inventoryServiceModel.getInventory().length>0)
         logger.info(inventoryServiceModel.getInventory()[0].cashback()+"");
     }
     @Autowired

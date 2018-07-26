@@ -5,6 +5,7 @@ import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.AppRestRequest;
 import com.nearbuy.dynamic.pricing.dynamicpricing.service.model.AppRestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -22,6 +23,7 @@ public class AppRestClient {
 
     private static final Logger logger = LoggerFactory.getLogger(AppRestClient.class);
 
+    @Autowired
     private RestTemplate restTemplate;
 
 //    public <T> AppRestResponse<T> firePost(AppRestRequest<String, String> req){
@@ -54,7 +56,6 @@ public class AppRestClient {
     private <T> ResponseEntity<T> fire(String uri,HttpMethod method,HttpEntity entity,Class<T> responseType,Map<String,Object> uriVariables, ResponseExtractor<ResponseEntity<T>> responseExtractor) {
         long startTime = AppUtil.currentTime();
         ResponseEntity<T> response = null;
-        this.restTemplate=new RestTemplate();
         if(responseExtractor != null) {
             if (uriVariables == null) {
                 response = restTemplate.execute(uri, method, null, responseExtractor);

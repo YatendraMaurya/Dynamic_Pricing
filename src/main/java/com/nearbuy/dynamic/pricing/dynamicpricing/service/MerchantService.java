@@ -34,7 +34,7 @@ public class MerchantService {
     //FIXME:CREATE MERCHANTRESPONSE CLASS FOR GETTING RESPONSE IN POJO
     public MerchantDetail getMerchant(Long mId)
     {
-        String url = env.getProperty("merchant.service")  + mId + "/summary?requiresOnlyPublished=true";
+        String url = env.getProperty("merchant.service") + "/api/v1/merchant/" + mId + "/summary?requiresOnlyPublished=true";
         ResponseEntity<String> resp=client.fireGetWithCaching(url,null,null);
         if(resp.getStatusCode().is2xxSuccessful()) {
             return AppUtil.getFromJson(resp.getBody(), MerchantDetail.class);

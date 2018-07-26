@@ -25,7 +25,7 @@ public class DealService {
     AppProperties env;
 
     public DealServiceResponse getDealDetail(Long merchantId){
-        String url = env.getProperty("deal.service")+merchantId+"?isPal=true";
+        String url = env.getProperty("deal.service")+ "/platform/api/deal/live/merchant/" + merchantId+"?isPal=true";
         logger.info(url);
         ResponseEntity<String> resp = appRestClient.fireGetWithCaching(url,null,null);
         if (resp.getStatusCode().is2xxSuccessful()) {

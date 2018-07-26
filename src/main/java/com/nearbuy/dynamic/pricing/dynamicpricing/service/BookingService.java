@@ -33,7 +33,7 @@ public class BookingService {
     private AppRestClient client;
 
     public BookingResponse getBookingDetails(long id) {
-        String url = env.getProperty("booking.service") + id + "?isDetailReq=true";
+        String url = env.getProperty("booking.service") + "/v2/bookings/order/" + id + "?isDetailReq=true";
        // logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url, null, null);
         if (resp.getStatusCode().is2xxSuccessful()) {

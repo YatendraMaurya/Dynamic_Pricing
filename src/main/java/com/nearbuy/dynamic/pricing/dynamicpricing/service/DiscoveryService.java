@@ -27,7 +27,7 @@ public class DiscoveryService {
     public MerchantDiscoveryResponse getDiscoveryDetail(DiscoveryPostRequest dpr) {
         this.discoveryPostRequest = dpr;
         initRequest();
-        String url=env.getProperty("discovery.base");
+        String url=env.getProperty("discovery.base") + "/nile-discovery-V2/merchants/listing";
         ResponseEntity<String> resp=restClient.firePostJsonWithCaching(url,null,this.postBody);
         if (resp.getStatusCode().is2xxSuccessful()) {
 

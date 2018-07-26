@@ -26,7 +26,7 @@ public class AccountService {
 
     public AccountServiceModel getAccountDetails(Long id){
         logger.info("getAccountDetails: entering with id : {}", id);
-        String url= env.getProperty("account.service")+id;
+        String url= env.getProperty("account.service")+"/accounts/"+id;
         logger.info(url);
         ResponseEntity<String> resp = client.fireGet(url,null,null);
         if (resp.getStatusCode().is2xxSuccessful()) {

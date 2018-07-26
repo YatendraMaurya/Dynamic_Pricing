@@ -62,9 +62,7 @@ public class NotificationService {
     private static final String TEMPLATE_ID = "%TEMPLATE_ID%";
 
     public Long send(Long mid,List<Long> users, int templateId, Double cashback_from, Double cashback_to,Long optioinID){
-        String url = env.getProperty("notification.manager.base");
-        logger.info(String.valueOf(cashback_to));
-        logger.info(url);
+        String url = env.getProperty("notification.manager.base") + "/api/v1/communication";
         StringBuilder userArray = new StringBuilder();
         for(Long num : users){
             userArray.append("\"").append(num).append("\"").append(',');
@@ -75,10 +73,8 @@ public class NotificationService {
                 replace(String.valueOf(MID), String.valueOf(mid)).
                 replace(String.valueOf(OPTION_ID), String.valueOf(optioinID)).
                 replace(String.valueOf(CASHBACK_TO), String.valueOf(cashback_to)).replace(USERS, userArr);
-        logger.info(postBody);
         ResponseEntity<String> res=restClient.firePostJson(url,null,postBody);
         if (res.getStatusCode().is2xxSuccessful()) {
-            logger.info(AppUtil.getFromJson(res.getBody(), Long.class).toString());
             logger.info("Successfully sent notification");
             return AppUtil.getFromJson(res.getBody(), Long.class);
         } else {
