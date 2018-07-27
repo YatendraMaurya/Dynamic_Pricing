@@ -1,7 +1,7 @@
 
 TODOs
 check should be included in BookingSuscriberConfig to get only todays booking from mongoBooking collection
-Save NotifiactionId Response also in Notifaction mongo.
+Save NotifiactionId Response and time also in Notifaction mongo.
 Change mongo collection name to proper name.
 
 
