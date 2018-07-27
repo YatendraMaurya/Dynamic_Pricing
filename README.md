@@ -1,11 +1,7 @@
 
 TODOs
-Maintain 
+check should be included in BookingSuscriberConfig to get only todays booking from mongoBooking collection
 
-environment-LOCAL.properties
-environment-QA.properties
-environment-STAG.properties
-environment-PROD.properties
 
 FIXMEs
 -----------------------------

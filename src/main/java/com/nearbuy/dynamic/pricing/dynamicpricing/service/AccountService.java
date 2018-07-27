@@ -41,27 +41,6 @@ public class AccountService {
         }
     }
 
-    public List<Long> getDecisonMakerT(Long id) {
-        List<Long> res = new ArrayList<>();
-            AccountServiceModel accountServiceModel = getAccountDetails(id);
-            List<AccountServiceModel.AccountUser> userList = accountServiceModel.getRs().getAccountUsers();
-            logger.info(userList.toString());
-            for (AccountServiceModel.AccountUser user : userList) {
-                if(user.getUserDevice().length>0){
-                    for(AccountServiceModel.UserDevice userDevice : user.getUserDevice()){
-                        //logger.info(user.getRole().getRoleName());
-                       // logger.info("User appversion " +Integer.parseInt(userDevice.getAppVersion().split("_")[1])
-                       // + " Useros  " + userDevice.getOs());
-                        if (user.getRole().getRoleName().equalsIgnoreCase("Decision Maker")&
-                            userDevice.getOs().equalsIgnoreCase("app_android")&
-                            Integer.parseInt(userDevice.getAppVersion().split("_")[1])>=17) {
-                                res.add(user.getId());
-                        }
-                    }
-            }}
-            logger.info(res.toString());
-        return res;
-    }
     private boolean isAdminOrPalManager(AccountServiceModel.AccountUser accountUser) {
         return "Decision Maker".equalsIgnoreCase(accountUser.getRole().getRoleName()) || "PAL Manager".equalsIgnoreCase(accountUser.getRole().getRoleName());
     }

@@ -66,6 +66,7 @@ public class BookingSubscriber implements AppSubscriber<Booking.BookingWrraper>{
         if (booking1.getStatus().equalsIgnoreCase(BookingDao.ACCEPTED)) {
             logger.info("getting booking details from orderId = " + booking1.getOrderId());
             BookingResponse bookingResponse = bookingService.getBookingDetails(booking1.getOrderId());
+            //FIXME: create a check for checking weather this merchant has already got booking today or not
             if (!WORKFLOW_TYPE.equals(bookingResponse.getOrderDetail().getOrderLines().get(0).getWorkflowType())) {
                 logger.warn("does not seems to be PAL booking. Ignoring the event {}", AppUtil.toJson(booking));
             } else {
