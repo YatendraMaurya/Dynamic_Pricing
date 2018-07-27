@@ -50,6 +50,7 @@ public class Notification {
     }
 
     String discountDetail;
+
     public Double getUpdatedCashBack(){
         return Double.valueOf(this.discountDetail.split(",")[2].split(":")[1].replace("}",""));
     }

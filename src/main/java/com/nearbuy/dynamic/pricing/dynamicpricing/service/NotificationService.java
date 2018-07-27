@@ -72,11 +72,11 @@ public class NotificationService {
              userArray.deleteCharAt(userArray.length() - 1);
 
         String userArr = userArray.toString();
-        this.postBody = this.postBody.replace(TEMPLATE_ID, String.valueOf(templateId)).
+        String body = this.postBody.replace(TEMPLATE_ID, String.valueOf(templateId)).
                 replace(String.valueOf(MID), String.valueOf(mid)).
                 replace(String.valueOf(OPTION_ID), String.valueOf(optioinID)).
                 replace(String.valueOf(CASHBACK_TO), String.valueOf(cashback_to)).replace(USERS, userArr);
-        ResponseEntity<String> res=restClient.firePostJson(url,null,postBody);
+        ResponseEntity<String> res=restClient.firePostJson(url,null,body);
         if (res.getStatusCode().is2xxSuccessful()) {
             logger.info("Successfully sent notification");
             return AppUtil.getFromJson(res.getBody(), Long.class);
